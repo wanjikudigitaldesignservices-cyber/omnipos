@@ -4,6 +4,7 @@ import React, { useState } from "react";
 import { loginUser } from "@/actions/auth";
 import { BrandLogo } from "@/components/brand-logo";
 import Link from "next/link";
+import { SMESlideshow } from "@/components/sme-slideshow";
 import { ArrowRight, Lock, KeyRound, Sparkles, AlertCircle, ShieldCheck } from "lucide-react";
 import { useRouter } from "next/navigation";
 
@@ -30,39 +31,23 @@ export default function LoginPage() {
 
   return (
     <div className="min-h-screen w-full grid lg:grid-cols-2 bg-slate-950 text-slate-100">
-      {/* Left Column: Visual branding */}
-      <div className="relative hidden lg:flex flex-col justify-between p-12 bg-gradient-to-br from-slate-900 via-slate-950 to-indigo-950/40 border-r border-slate-800">
-        <div className="absolute inset-0 bg-[radial-gradient(#6366f1_1px,transparent_1px)] [background-size:24px_24px] opacity-15" />
-        
-        <div className="relative z-10">
+      {/* Left Column: Bank-Grade SME Slideshow Hero */}
+      <div className="relative hidden lg:flex flex-col justify-between p-8 xl:p-12 bg-slate-950 border-r border-slate-800">
+        <div className="relative z-10 mb-4">
           <BrandLogo size="lg" />
-          <div className="mt-16 space-y-4 max-w-lg">
-            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-semibold bg-indigo-500/10 text-indigo-400 border border-indigo-500/20">
-              <Sparkles className="w-3.5 h-3.5" /> High-Throughput POS Terminal
-            </div>
-            <h1 className="text-4xl font-black tracking-tight text-white leading-tight">
-              Sign into your SME Management Center.
-            </h1>
-            <p className="text-slate-400 text-base leading-relaxed">
-              Open shifts, audit cash float discrepancies, manage stock in real time, and process split payments in seconds.
-            </p>
-          </div>
         </div>
 
-        <div className="relative z-10 p-6 rounded-2xl bg-slate-900/80 border border-slate-800/80 backdrop-blur-md space-y-3">
-          <div className="flex items-center gap-2 text-emerald-400 text-sm font-bold">
-            <KeyRound className="w-4 h-4" /> Fast Cashier PIN Switcher Available
-          </div>
-          <p className="text-xs text-slate-400 leading-normal">
-            Once logged into the main register terminal, cashiers can switch instantly using their 4-digit PIN without re-entering email credentials.
-          </p>
+        {/* Banking-App Style Interactive SME Carousel */}
+        <div className="flex-1 my-2 min-h-[500px]">
+          <SMESlideshow />
         </div>
 
-        <div className="relative z-10 flex items-center justify-between text-xs text-slate-500 border-t border-slate-800/80 pt-6">
+        <div className="relative z-10 flex items-center justify-between text-xs text-slate-500 border-t border-slate-800/80 pt-4">
           <span>Protected by HttpOnly Secure JWT Sessions</span>
           <span>© 2026 OmniPOS Cloud</span>
         </div>
       </div>
+
 
       {/* Right Column: Login Form */}
       <div className="flex items-center justify-center p-6 sm:p-12 relative">

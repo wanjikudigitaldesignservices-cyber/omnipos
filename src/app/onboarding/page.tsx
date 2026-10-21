@@ -23,12 +23,14 @@ import {
   Coins,
   ShieldCheck,
 } from "lucide-react";
+import { SMESlideshow } from "@/components/sme-slideshow";
 
 export default function OnboardingPage() {
   const router = useRouter();
   const [step, setStep] = useState(1);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [showSpotlight, setShowSpotlight] = useState(false);
 
   // Step 1: Business Profile
   const [businessName, setBusinessName] = useState("My Business");
@@ -164,6 +166,32 @@ export default function OnboardingPage() {
 
       {/* Main Container */}
       <main className="flex-1 max-w-5xl w-full mx-auto p-6 md:p-10 flex flex-col justify-center">
+        {/* SME Merchant Spotlight (KCB / Co-op Bank App-Style Slideshow) */}
+        <div className="mb-8 rounded-3xl overflow-hidden border border-slate-800 bg-slate-900/40 backdrop-blur-sm">
+          <div className="p-4 sm:p-5 flex items-center justify-between border-b border-slate-800/80 bg-slate-900/70">
+            <div className="flex items-center gap-2.5">
+              <Sparkles className="w-4 h-4 text-emerald-400" />
+              <span className="text-xs font-bold text-white uppercase tracking-wider">
+                Merchant Inspiration: African SMEs Scaling with OmniPOS
+              </span>
+            </div>
+            <button
+              type="button"
+              onClick={() => setShowSpotlight(!showSpotlight)}
+              className="px-3 py-1 rounded-lg text-xs font-semibold bg-emerald-500/10 hover:bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 transition-all cursor-pointer"
+            >
+              {showSpotlight ? "Hide Slideshow" : "View Merchant Stories (Slideshow)"}
+            </button>
+          </div>
+          {showSpotlight && (
+            <div className="p-4 sm:p-6 bg-slate-950">
+              <div className="h-[460px]">
+                <SMESlideshow />
+              </div>
+            </div>
+          )}
+        </div>
+
         {error && (
           <div className="mb-6 p-4 rounded-xl bg-red-500/10 border border-red-500/30 text-red-400 text-sm flex items-center gap-2">
             <span>{error}</span>
@@ -380,6 +408,35 @@ export default function OnboardingPage() {
                   </div>
                 );
               })}
+            </div>
+
+            {/* Active Industry Visual Feature Showcase */}
+            <div className="p-4 sm:p-5 rounded-2xl bg-slate-900/80 border border-emerald-500/30 flex flex-col sm:flex-row items-center gap-4">
+              <img
+                src={
+                  businessType === "RETAIL"
+                    ? "/images/hero-retail.jpg"
+                    : businessType === "PHARMACY_AGROVET"
+                    ? "/images/hero-chemist.jpg"
+                    : "/images/hero-cafe.jpg"
+                }
+                alt="Industry Merchant"
+                className="w-20 h-20 sm:w-24 sm:h-24 rounded-xl object-cover object-top border border-emerald-500/40 shrink-0 shadow-lg"
+              />
+              <div className="space-y-1 text-center sm:text-left">
+                <div className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-emerald-500/10 text-emerald-400 text-[10px] font-bold uppercase">
+                  <Sparkles className="w-3 h-3" /> Industry Preset Active
+                </div>
+                <h4 className="text-white font-bold text-sm">
+                  {businessType === "RETAIL" && "Retail & Supermarket — Optimized for barcode scanning and high customer throughput"}
+                  {businessType === "PHARMACY_AGROVET" && "Pharmacy & Agrovet — Prescriptions, expiry lot tracking, and regulatory compliance"}
+                  {businessType === "RESTAURANT" && "Dining & Cafe — Table management, kitchen orders, and swift split bills"}
+                  {businessType === "SERVICE" && "Salon & Services — Staff commissions, hourly bookings, and personalized client notes"}
+                </h4>
+                <p className="text-xs text-slate-400">
+                  5 pre-configured demo inventory items will be instantly created for your register upon completion.
+                </p>
+              </div>
             </div>
 
             <div className="flex items-center justify-between pt-4">

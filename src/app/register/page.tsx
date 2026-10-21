@@ -4,6 +4,7 @@ import React, { useState } from "react";
 import { registerSME } from "@/actions/auth";
 import { BrandLogo } from "@/components/brand-logo";
 import Link from "next/link";
+import { SMESlideshow } from "@/components/sme-slideshow";
 import { ArrowRight, ShieldCheck, Zap, Receipt, Users, CheckCircle2 } from "lucide-react";
 import { useRouter } from "next/navigation";
 
@@ -31,46 +32,25 @@ export default function RegisterPage() {
 
   return (
     <div className="min-h-screen w-full grid lg:grid-cols-2 bg-slate-950 text-slate-100">
-      {/* Left Column: Brand Hero & Value Proposition */}
-      <div className="relative hidden lg:flex flex-col justify-between p-12 bg-gradient-to-br from-slate-900 via-slate-950 to-emerald-950/40 border-r border-slate-800">
-        <div className="absolute inset-0 bg-[radial-gradient(#10b981_1px,transparent_1px)] [background-size:24px_24px] opacity-15" />
-        
-        <div className="relative z-10">
+      {/* Left Column: Bank-Grade SME Slideshow Hero */}
+      <div className="relative hidden lg:flex flex-col justify-between p-8 xl:p-12 bg-slate-950 border-r border-slate-800">
+        <div className="relative z-10 mb-4">
           <BrandLogo size="lg" />
-          <div className="mt-16 space-y-4 max-w-lg">
-            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-semibold bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">
-              <Zap className="w-3.5 h-3.5" /> Next-Gen Point of Sale & ERP for African SMEs
-            </div>
-            <h1 className="text-4xl font-black tracking-tight text-white leading-tight">
-              One Unified Engine for Retail, Chemist, Agrovet & Dining.
-            </h1>
-            <p className="text-slate-400 text-base leading-relaxed">
-              Experience the speed of an offline register with the intelligence of cloud ERP. Zero fake mock data, 100% powered by Neon Serverless PostgreSQL.
-            </p>
-          </div>
         </div>
 
-        {/* Feature Highlights */}
-        <div className="relative z-10 grid grid-cols-2 gap-4 my-8">
-          <div className="p-4 rounded-xl bg-slate-900/60 border border-slate-800/80 backdrop-blur-sm">
-            <Receipt className="w-5 h-5 text-emerald-400 mb-2" />
-            <h3 className="font-semibold text-sm text-white">Split Payments</h3>
-            <p className="text-xs text-slate-400 mt-1">Split seamlessly across Cash, M-Pesa Till & Customer Credit.</p>
-          </div>
-          <div className="p-4 rounded-xl bg-slate-900/60 border border-slate-800/80 backdrop-blur-sm">
-            <Users className="w-5 h-5 text-teal-400 mb-2" />
-            <h3 className="font-semibold text-sm text-white">Deni / Credit Ledger</h3>
-            <p className="text-xs text-slate-400 mt-1">Never lose track of customer balances with real-time repayment logging.</p>
-          </div>
+        {/* Banking-App Style Interactive SME Carousel */}
+        <div className="flex-1 my-2 min-h-[500px]">
+          <SMESlideshow />
         </div>
 
-        <div className="relative z-10 flex items-center justify-between text-xs text-slate-500 border-t border-slate-800/80 pt-6">
+        <div className="relative z-10 flex items-center justify-between text-xs text-slate-500 border-t border-slate-800/80 pt-4">
           <span className="flex items-center gap-1.5">
             <ShieldCheck className="w-4 h-4 text-emerald-500" /> Multi-Tenant Neon PostgreSQL
           </span>
           <span>© 2026 OmniPOS Cloud</span>
         </div>
       </div>
+
 
       {/* Right Column: Registration Form */}
       <div className="flex items-center justify-center p-6 sm:p-12 relative">
