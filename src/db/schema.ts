@@ -174,7 +174,7 @@ export const products = pgTable(
   ]
 );
 
-// 5. Register Shifts (Odoo-Style Cash Control)
+// 5. Register Shifts (Cash Drawer Control & Float Enforcement)
 export const registerShifts = pgTable(
   "register_shifts",
   {

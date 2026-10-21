@@ -1,6 +1,6 @@
 # OmniPOS — Universal Multi-Tenant Point of Sale (POS) & Cloud ERP for SMEs
 
-OmniPOS is a high-throughput, production-ready, multi-tenant Universal Point of Sale (POS) and Cloud ERP system (Odoo POS & Square equivalent) tailored for African and global SMEs spanning **Retail & Supermarkets**, **Restaurants & Cafes**, **Pharmacies & Agrovets**, and **Service Salons & Spas**.
+OmniPOS is a high-throughput, production-ready, multi-tenant Universal Point of Sale (POS) and Cloud ERP system tailored for African and global SMEs spanning **Retail & Supermarkets**, **Restaurants & Cafes**, **Pharmacies & Agrovets**, and **Service Salons & Spas**.
 
 ---
 
@@ -25,7 +25,7 @@ Every operational table includes a foreign key referencing `tenants.id` (`onDele
 4. **`categories` & `products`:**
    - `categories`: `id`, `tenantId`, `name`, `color`.
    - `products`: `id`, `tenantId`, `categoryId`, `name`, `sku`, `barcode`, `costPrice`, `sellingPrice`, `stockQuantity` (supports decimals for kg/ltr), `lowStockThreshold`, `unit`, `expiryDate`, `batchNumber`, `modifiersJson`, `imageUrl`.
-5. **`register_shifts` (Odoo-Style Cash Control):**
+5. **`register_shifts` (Cash Control & Float Enforcement):**
    - `id`, `tenantId`, `userId`, `openedAt`, `closedAt`, `openingFloat`, `expectedCash`, `actualCountedCash`, `variance` (Over/Short), `notes`, `status` (`OPEN | CLOSED`).
 6. **`customers` (CRM, Loyalty & Credit/Deni):**
    - `id`, `tenantId`, `name`, `phone`, `email`, `loyaltyPoints`, `creditBalance` (customer debt/tab), `creditLimit`.
@@ -47,7 +47,7 @@ Every operational table includes a foreign key referencing `tenants.id` (`onDele
   - **Step 2:** Select Industry (`RETAIL`, `RESTAURANT`, `PHARMACY_AGROVET`, `SERVICE`). Automatically seeds 5 realistic industry products and matching categories into Neon DB!
   - **Step 3:** Tender acceptance configuration and 4-digit POS Cashier quick-PIN.
 
-### 2. Universal Odoo-Grade POS Terminal (`/pos`)
+### 2. Universal Enterprise POS Terminal (`/pos`)
 - **Industry-Adaptive Interface:**
   - *Restaurant:* Table # selector, Dine-In / Takeaway toggle, item kitchen notes.
   - *Pharmacy & Agrovet:* Batch # / Lot tracking, expiry date alarms, decimal weights (`+0.25`, `+0.5` kg).

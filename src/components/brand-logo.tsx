@@ -106,7 +106,7 @@ export function BrandLogo({
             </span>
           </div>
           <span className={`font-semibold tracking-widest text-slate-400 uppercase ${currentSize.sub}`}>
-            Odoo-Grade SME ERP
+            Universal SME ERP
           </span>
         </div>
       )}

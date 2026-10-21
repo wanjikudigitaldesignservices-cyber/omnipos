@@ -3,7 +3,7 @@ import "./globals.css";
 
 export const metadata: Metadata = {
   title: "OmniPOS — Universal SME Point of Sale & ERP",
-  description: "Next-generation Odoo-inspired Point of Sale and Cloud ERP for Retail, Chemists, Agrovets, and Dining SMEs.",
+  description: "Next-generation Universal Point of Sale and Cloud ERP for Retail, Chemists, Agrovets, and Dining SMEs.",
 };
 
 export default function RootLayout({

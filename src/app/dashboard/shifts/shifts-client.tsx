@@ -80,7 +80,7 @@ export function ShiftsManagementClient({ data }: ShiftsClientProps) {
             Register Shifts & Cash Reconciliation
           </h1>
           <p className="text-slate-400 text-sm mt-0.5">
-            Odoo-grade cash float enforcement, counted vs. expected drawer variance, and Z-Reports.
+            Enterprise-grade cash float enforcement, counted vs. expected drawer variance, and Z-Reports.
           </p>
         </div>
 

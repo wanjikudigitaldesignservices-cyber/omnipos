@@ -4,7 +4,7 @@ import React, { useState } from "react";
 import { loginUser } from "@/actions/auth";
 import { BrandLogo } from "@/components/brand-logo";
 import Link from "next/link";
-import { ArrowRight, Lock, KeyRound, Sparkles, AlertCircle } from "lucide-react";
+import { ArrowRight, Lock, KeyRound, Sparkles, AlertCircle, ShieldCheck } from "lucide-react";
 import { useRouter } from "next/navigation";
 
 export default function LoginPage() {
@@ -133,14 +133,23 @@ export default function LoginPage() {
             </button>
           </form>
 
-          <p className="text-center text-sm text-slate-400">
-            Setting up a new business?{" "}
-            <Link href="/register" className="font-semibold text-emerald-400 hover:text-emerald-300 underline">
-              Create SME Workspace
+          <div className="flex flex-col items-center gap-2 pt-2 text-center text-xs text-slate-400">
+            <p>
+              Setting up a new business?{" "}
+              <Link href="/register" className="font-semibold text-emerald-400 hover:text-emerald-300 underline">
+                Create SME Workspace
+              </Link>
+            </p>
+            <Link
+              href="/privacy"
+              className="text-slate-500 hover:text-slate-400 transition-colors flex items-center gap-1 mt-1"
+            >
+              <ShieldCheck className="w-3.5 h-3.5" /> Privacy Policy & Merchant Terms
             </Link>
-          </p>
+          </div>
         </div>
       </div>
     </div>
+
   );
 }

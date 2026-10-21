@@ -11,6 +11,7 @@ export default function RegisterPage() {
   const router = useRouter();
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [consentAccepted, setConsentAccepted] = useState(false);
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -147,10 +148,47 @@ export default function RegisterPage() {
               />
             </div>
 
+            {/* Merchant Privacy & Data Consent Form */}
+            <div className="p-4 rounded-xl bg-slate-900/80 border border-slate-800 hover:border-slate-700 transition-all space-y-3">
+              <div className="flex items-start gap-2.5">
+                <ShieldCheck className="w-4 h-4 text-emerald-400 mt-0.5 shrink-0" />
+                <div className="space-y-1">
+                  <span className="text-xs font-bold text-white block">
+                    Merchant Data Protection & Privacy Notice
+                  </span>
+                  <p className="text-[11px] text-slate-400 leading-relaxed">
+                    By creating an SME workspace, you confirm you are authorized to bind this business. Your transactions, inventory ledger, and cashier PINs will be encrypted in your isolated tenant partition.
+                  </p>
+                </div>
+              </div>
+
+              <label className="flex items-start gap-2.5 cursor-pointer pt-1 border-t border-slate-800/80 group">
+                <input
+                  type="checkbox"
+                  required
+                  checked={consentAccepted}
+                  onChange={(e) => setConsentAccepted(e.target.checked)}
+                  className="mt-0.5 w-4 h-4 rounded border-slate-700 bg-slate-950 text-emerald-500 focus:ring-emerald-500/20 focus:ring-offset-0 cursor-pointer accent-emerald-500"
+                />
+                <span className="text-xs text-slate-300 group-hover:text-white transition-colors leading-tight select-none">
+                  <strong className="text-emerald-400">I Understand & Agree</strong> to the{" "}
+                  <Link
+                    href="/privacy"
+                    target="_blank"
+                    className="underline text-emerald-400 hover:text-emerald-300 font-semibold"
+                    onClick={(e) => e.stopPropagation()}
+                  >
+                    OmniPOS Privacy Policy
+                  </Link>{" "}
+                  and SME Merchant Terms of Service.
+                </span>
+              </label>
+            </div>
+
             <button
               type="submit"
-              disabled={loading}
-              className="w-full py-3.5 px-4 rounded-xl bg-gradient-to-r from-emerald-500 to-teal-600 hover:from-emerald-400 hover:to-teal-500 text-white font-bold text-sm shadow-lg shadow-emerald-500/25 flex items-center justify-center gap-2 transition-all disabled:opacity-50 cursor-pointer"
+              disabled={loading || !consentAccepted}
+              className="w-full py-3.5 px-4 rounded-xl bg-gradient-to-r from-emerald-500 to-teal-600 hover:from-emerald-400 hover:to-teal-500 text-white font-bold text-sm shadow-lg shadow-emerald-500/25 flex items-center justify-center gap-2 transition-all disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer"
             >
               {loading ? (
                 <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin" />
@@ -162,14 +200,23 @@ export default function RegisterPage() {
             </button>
           </form>
 
-          <p className="text-center text-sm text-slate-400">
-            Already have an active register?{" "}
-            <Link href="/login" className="font-semibold text-emerald-400 hover:text-emerald-300 underline">
-              Sign In
+          <div className="flex flex-col items-center gap-2 pt-2 text-center text-xs text-slate-400">
+            <p>
+              Already have an active register?{" "}
+              <Link href="/login" className="font-semibold text-emerald-400 hover:text-emerald-300 underline">
+                Sign In
+              </Link>
+            </p>
+            <Link
+              href="/privacy"
+              className="text-slate-500 hover:text-slate-400 transition-colors flex items-center gap-1 mt-1"
+            >
+              <ShieldCheck className="w-3.5 h-3.5" /> View Privacy Policy & Merchant Rights
             </Link>
-          </p>
+          </div>
         </div>
       </div>
     </div>
+
   );
 }
