@@ -1,6 +1,7 @@
 "use server";
 
-import { db } from "@/db";
+import { db, isDatabaseConfigured } from "@/db";
+import { ensureDatabaseTables } from "@/db/init";
 import { tenants, users, categories, products, inventoryLedger, customers } from "@/db/schema";
 import { hashPassword, verifyPassword, hashPin, verifyPin, createSession, clearSession, getSession } from "@/lib/auth";
 import { eq, and } from "drizzle-orm";
@@ -22,10 +23,26 @@ export async function registerSME(formData: FormData) {
       return { success: false, error: "Password must be at least 6 characters long." };
     }
 
-    // Check if email already registered
-    const existingUser = await db.query.users.findFirst({
-      where: eq(users.email, email),
-    });
+    if (!isDatabaseConfigured()) {
+      return {
+        success: false,
+        error: "Neon Database not connected. Please add your DATABASE_URL in Vercel Environment Variables.",
+      };
+    }
+
+    // Check if email already registered (auto-initializes tables if missing)
+    let existingUser;
+    try {
+      existingUser = await db.query.users.findFirst({
+        where: eq(users.email, email),
+      });
+    } catch (dbErr: any) {
+      console.warn("Table users not ready, ensuring database tables are initialized...", dbErr?.message);
+      await ensureDatabaseTables();
+      existingUser = await db.query.users.findFirst({
+        where: eq(users.email, email),
+      });
+    }
 
     if (existingUser) {
       return { success: false, error: "An account with this email already exists." };
@@ -90,9 +107,25 @@ export async function loginUser(formData: FormData) {
       return { success: false, error: "Email and password are required." };
     }
 
-    const user = await db.query.users.findFirst({
-      where: eq(users.email, email),
-    });
+    if (!isDatabaseConfigured()) {
+      return {
+        success: false,
+        error: "Neon Database not connected. Please add your DATABASE_URL in Vercel Environment Variables.",
+      };
+    }
+
+    let user;
+    try {
+      user = await db.query.users.findFirst({
+        where: eq(users.email, email),
+      });
+    } catch (dbErr: any) {
+      console.warn("Table users not ready, ensuring database tables are initialized...", dbErr?.message);
+      await ensureDatabaseTables();
+      user = await db.query.users.findFirst({
+        where: eq(users.email, email),
+      });
+    }
 
     if (!user) {
       return { success: false, error: "Invalid email or password." };
