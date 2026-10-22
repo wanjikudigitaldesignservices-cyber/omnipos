@@ -76,10 +76,10 @@ export function ShiftsManagementClient({ data }: ShiftsClientProps) {
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
-          <h1 className="text-3xl font-black text-white tracking-tight">
+          <h1 className="text-3xl font-black text-slate-900 dark:text-white tracking-tight">
             Register Shifts & Cash Reconciliation
           </h1>
-          <p className="text-slate-400 text-sm mt-0.5">
+          <p className="text-slate-500 dark:text-slate-400 text-sm mt-0.5">
             Enterprise-grade cash float enforcement, counted vs. expected drawer variance, and Z-Reports.
           </p>
         </div>
@@ -98,29 +98,29 @@ export function ShiftsManagementClient({ data }: ShiftsClientProps) {
 
       {/* Active Shift Banner Card */}
       {activeShift ? (
-        <div className="p-6 rounded-3xl bg-gradient-to-br from-slate-900 to-emerald-950/30 border border-emerald-500/30 shadow-md">
+        <div className="p-6 rounded-3xl bg-white dark:bg-gradient-to-br dark:from-slate-900 dark:to-emerald-950/30 border border-emerald-500/30 shadow-xs">
           <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
             <div className="flex items-center gap-3.5">
-              <div className="w-12 h-12 rounded-2xl bg-emerald-500/10 border border-emerald-500/30 text-emerald-400 flex items-center justify-center">
+              <div className="w-12 h-12 rounded-2xl bg-emerald-50 dark:bg-emerald-500/10 border border-emerald-500/30 text-emerald-600 dark:text-emerald-400 flex items-center justify-center">
                 <Clock className="w-6 h-6 animate-pulse" />
               </div>
               <div>
-                <div className="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full text-[10px] font-bold bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 mb-1">
+                <div className="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full text-[10px] font-bold bg-emerald-50 dark:bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border border-emerald-500/20 mb-1">
                   Active Drawer Session
                 </div>
-                <h3 className="text-lg font-bold text-white">Current Shift In Progress</h3>
-                <p className="text-xs text-slate-400">
+                <h3 className="text-lg font-black text-slate-900 dark:text-white">Current Shift In Progress</h3>
+                <p className="text-xs text-slate-500 dark:text-slate-400">
                   Opened {new Date(activeShift.openedAt).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })} by {activeShift.user?.fullName}
                 </p>
               </div>
             </div>
 
-            <div className="grid grid-cols-2 gap-6 bg-slate-950/80 p-4 rounded-2xl border border-slate-800">
+            <div className="grid grid-cols-2 gap-6 bg-slate-50 dark:bg-slate-950/80 p-4 rounded-2xl border border-slate-200 dark:border-slate-800">
               <div>
                 <span className="text-[10px] uppercase font-bold text-slate-500 tracking-wider block">
                   Starting Float
                 </span>
-                <span className="font-mono font-bold text-white text-base">
+                <span className="font-mono font-bold text-slate-900 dark:text-white text-base">
                   {tenant.currency} {parseFloat(activeShift.openingFloat).toFixed(2)}
                 </span>
               </div>
@@ -128,7 +128,7 @@ export function ShiftsManagementClient({ data }: ShiftsClientProps) {
                 <span className="text-[10px] uppercase font-bold text-slate-500 tracking-wider block">
                   Expected Cash Balance
                 </span>
-                <span className="font-mono font-black text-emerald-400 text-lg">
+                <span className="font-mono font-black text-emerald-600 dark:text-emerald-400 text-lg">
                   {tenant.currency} {parseFloat(activeShift.expectedCash).toFixed(2)}
                 </span>
               </div>
@@ -136,119 +136,127 @@ export function ShiftsManagementClient({ data }: ShiftsClientProps) {
           </div>
         </div>
       ) : (
-        <div className="p-6 rounded-3xl bg-slate-900 border border-slate-800 flex items-center justify-between">
+        <div className="p-6 rounded-3xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 flex items-center justify-between shadow-xs">
           <div className="flex items-center gap-3">
-            <div className="p-3 rounded-2xl bg-slate-800 text-slate-400">
+            <div className="p-3 rounded-2xl bg-slate-100 dark:bg-slate-800 text-slate-500 dark:text-slate-400">
               <Lock className="w-5 h-5" />
             </div>
             <div>
-              <h4 className="font-bold text-white text-sm">No Shift Currently Open</h4>
-              <p className="text-xs text-slate-400">Cash drawer is locked. Staff must open a session on the POS terminal to begin sales.</p>
+              <h4 className="font-bold text-slate-900 dark:text-white text-sm">No Shift Currently Open</h4>
+              <p className="text-xs text-slate-500 dark:text-slate-400">Cash drawer is locked. Staff must open a session on the POS terminal to begin ringing up sales.</p>
             </div>
           </div>
         </div>
       )}
 
       {/* Shifts History Table */}
-      <div className="rounded-2xl border border-slate-800 bg-slate-900/50 overflow-hidden shadow-sm">
-        <div className="p-4 border-b border-slate-800 flex items-center justify-between">
-          <h3 className="font-bold text-white text-sm flex items-center gap-2">
-            <Calendar className="w-4 h-4 text-emerald-400" />
+      <div className="rounded-2xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900/50 overflow-hidden shadow-xs">
+        <div className="p-4 border-b border-slate-200 dark:border-slate-800 flex items-center justify-between">
+          <h3 className="font-bold text-slate-900 dark:text-white text-sm flex items-center gap-2">
+            <Calendar className="w-4 h-4 text-emerald-600 dark:text-emerald-400" />
             <span>Shift Ledger & Cash Drawer Reconciliation</span>
           </h3>
         </div>
 
-        <div className="overflow-x-auto">
-          <table className="w-full text-left text-xs">
-            <thead className="bg-slate-900 text-slate-400 font-bold uppercase tracking-wider border-b border-slate-800">
-              <tr>
-                <th className="px-5 py-3.5">Opened & Closed</th>
-                <th className="px-5 py-3.5">Cashier</th>
-                <th className="px-5 py-3.5">Opening Float</th>
-                <th className="px-5 py-3.5">Expected Cash</th>
-                <th className="px-5 py-3.5">Actual Counted</th>
-                <th className="px-5 py-3.5">Variance (Over/Short)</th>
-                <th className="px-5 py-3.5">Status</th>
-                <th className="px-5 py-3.5 text-right">Z-Report</th>
-              </tr>
-            </thead>
-            <tbody className="divide-y divide-slate-800/60 font-medium font-mono text-[11px]">
-              {shifts.map((s) => {
-                const variance = s.variance ? parseFloat(s.variance) : null;
-                const isClosed = s.status === "CLOSED";
-                return (
-                  <tr key={s.id} className="hover:bg-slate-800/40 transition-colors">
-                    <td className="px-5 py-3.5 text-slate-400 font-sans">
-                      <div>{new Date(s.openedAt).toLocaleDateString()} {new Date(s.openedAt).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })}</div>
-                      {s.closedAt && (
-                        <div className="text-[10px] text-slate-500">
-                          to {new Date(s.closedAt).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })}
-                        </div>
-                      )}
-                    </td>
-                    <td className="px-5 py-3.5 font-sans font-bold text-white text-xs">
-                      {s.user?.fullName || "Staff"}
-                    </td>
-                    <td className="px-5 py-3.5 text-slate-300">
-                      {tenant.currency} {parseFloat(s.openingFloat).toFixed(2)}
-                    </td>
-                    <td className="px-5 py-3.5 text-white font-bold">
-                      {tenant.currency} {parseFloat(s.expectedCash).toFixed(2)}
-                    </td>
-                    <td className="px-5 py-3.5 text-slate-300">
-                      {s.actualCountedCash
-                        ? `${tenant.currency} ${parseFloat(s.actualCountedCash).toFixed(2)}`
-                        : "—"}
-                    </td>
-                    <td className="px-5 py-3.5 font-bold">
-                      {variance === null ? (
-                        <span className="text-slate-500 font-normal">Pending Close</span>
-                      ) : variance === 0 ? (
-                        <span className="text-emerald-400">Balanced (0.00)</span>
-                      ) : variance > 0 ? (
-                        <span className="text-blue-400">+{tenant.currency} {variance.toFixed(2)} (Over)</span>
-                      ) : (
-                        <span className="text-red-400">{tenant.currency} {variance.toFixed(2)} (Short)</span>
-                      )}
-                    </td>
-                    <td className="px-5 py-3.5">
-                      <span
-                        className={`px-2 py-0.5 rounded-md text-[10px] font-bold ${
-                          isClosed
-                            ? "bg-slate-800 text-slate-400 border border-slate-700"
-                            : "bg-emerald-500/10 text-emerald-400 border border-emerald-500/20"
-                        }`}
-                      >
-                        {s.status}
-                      </span>
-                    </td>
-                    <td className="px-5 py-3.5 text-right font-sans">
-                      <button
-                        type="button"
-                        onClick={() => handleInspectZReport(s.id)}
-                        className="px-2.5 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 hover:text-white border border-slate-700 text-xs font-bold cursor-pointer transition-all inline-flex items-center gap-1.5"
-                      >
-                        <FileText className="w-3.5 h-3.5 text-emerald-400" />
-                        <span>Z-Report</span>
-                      </button>
-                    </td>
-                  </tr>
-                );
-              })}
-            </tbody>
-          </table>
-        </div>
+        {shifts.length === 0 ? (
+          <div className="p-12 text-center text-slate-500 dark:text-slate-400">
+            <Clock className="w-8 h-8 mx-auto mb-2 opacity-50" />
+            <p className="font-bold">No historical shifts logged yet.</p>
+            <p className="text-xs mt-1">When staff start and close register drawer sessions, complete shift logs and variance reports will appear here.</p>
+          </div>
+        ) : (
+          <div className="overflow-x-auto">
+            <table className="w-full text-left text-xs">
+              <thead className="bg-slate-50 dark:bg-slate-900 text-slate-500 dark:text-slate-400 font-bold uppercase tracking-wider border-b border-slate-200 dark:border-slate-800">
+                <tr>
+                  <th className="px-5 py-3.5">Opened & Closed</th>
+                  <th className="px-5 py-3.5">Cashier</th>
+                  <th className="px-5 py-3.5">Opening Float</th>
+                  <th className="px-5 py-3.5">Expected Cash</th>
+                  <th className="px-5 py-3.5">Actual Counted</th>
+                  <th className="px-5 py-3.5">Variance (Over/Short)</th>
+                  <th className="px-5 py-3.5">Status</th>
+                  <th className="px-5 py-3.5 text-right">Z-Report</th>
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-slate-100 dark:divide-slate-800/60 font-medium font-mono text-[11px]">
+                {shifts.map((s) => {
+                  const variance = s.variance ? parseFloat(s.variance) : null;
+                  const isClosed = s.status === "CLOSED";
+                  return (
+                    <tr key={s.id} className="hover:bg-slate-50 dark:hover:bg-slate-800/40 transition-colors">
+                      <td className="px-5 py-3.5 text-slate-500 dark:text-slate-400 font-sans">
+                        <div>{new Date(s.openedAt).toLocaleDateString()} {new Date(s.openedAt).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })}</div>
+                        {s.closedAt && (
+                          <div className="text-[10px] text-slate-400 dark:text-slate-500">
+                            to {new Date(s.closedAt).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })}
+                          </div>
+                        )}
+                      </td>
+                      <td className="px-5 py-3.5 font-sans font-bold text-slate-900 dark:text-white text-xs">
+                        {s.user?.fullName || "Staff"}
+                      </td>
+                      <td className="px-5 py-3.5 text-slate-600 dark:text-slate-300">
+                        {tenant.currency} {parseFloat(s.openingFloat).toFixed(2)}
+                      </td>
+                      <td className="px-5 py-3.5 text-slate-900 dark:text-white font-bold">
+                        {tenant.currency} {parseFloat(s.expectedCash).toFixed(2)}
+                      </td>
+                      <td className="px-5 py-3.5 text-slate-600 dark:text-slate-300">
+                        {s.actualCountedCash
+                          ? `${tenant.currency} ${parseFloat(s.actualCountedCash).toFixed(2)}`
+                          : "—"}
+                      </td>
+                      <td className="px-5 py-3.5 font-bold">
+                        {variance === null ? (
+                          <span className="text-slate-400 font-normal">Pending Close</span>
+                        ) : variance === 0 ? (
+                          <span className="text-emerald-600 dark:text-emerald-400">Balanced (0.00)</span>
+                        ) : variance > 0 ? (
+                          <span className="text-blue-600 dark:text-blue-400">+{tenant.currency} {variance.toFixed(2)} (Over)</span>
+                        ) : (
+                          <span className="text-red-500">-{tenant.currency} {Math.abs(variance).toFixed(2)} (Short)</span>
+                        )}
+                      </td>
+                      <td className="px-5 py-3.5">
+                        <span
+                          className={`px-2 py-0.5 rounded-md text-[10px] font-bold ${
+                            isClosed
+                              ? "bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400 border border-slate-200 dark:border-slate-700"
+                              : "bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border border-emerald-500/20"
+                          }`}
+                        >
+                          {s.status}
+                        </span>
+                      </td>
+                      <td className="px-5 py-3.5 text-right font-sans">
+                        <button
+                          type="button"
+                          onClick={() => handleInspectZReport(s.id)}
+                          className="px-2.5 py-1.5 rounded-lg bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white border border-slate-200 dark:border-slate-700 text-xs font-bold cursor-pointer transition-all inline-flex items-center gap-1.5"
+                        >
+                          <FileText className="w-3.5 h-3.5 text-emerald-600 dark:text-emerald-400" />
+                          <span>Z-Report</span>
+                        </button>
+                      </td>
+                    </tr>
+                  );
+                })}
+              </tbody>
+            </table>
+          </div>
+        )}
       </div>
 
       {/* ======================================================== */}
       {/* MODAL 1: Z-Report Inspection Modal                       */}
       {/* ======================================================== */}
       {selectedShiftZReport && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-sm p-4 overflow-y-auto">
-          <div className="w-full max-w-sm rounded-3xl bg-slate-900 border border-slate-800 p-6 shadow-2xl space-y-4 relative my-6">
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 backdrop-blur-xs p-4 overflow-y-auto">
+          <div className="w-full max-w-sm rounded-3xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 p-6 shadow-2xl space-y-4 relative my-6">
             <button
               onClick={() => setSelectedShiftZReport(null)}
-              className="absolute top-4 right-4 text-slate-400 hover:text-white"
+              className="absolute top-4 right-4 text-slate-400 hover:text-slate-700 dark:hover:text-white"
             >
               <X className="w-5 h-5" />
             </button>
@@ -256,7 +264,7 @@ export function ShiftsManagementClient({ data }: ShiftsClientProps) {
             {/* Z-Report Styled Receipt Print Container */}
             <div
               id="z-report-print"
-              className="bg-white text-slate-950 p-5 rounded-xl font-mono text-xs leading-relaxed border border-slate-200 shadow-md space-y-2 select-text"
+              className="bg-white text-slate-950 p-5 rounded-xl font-mono text-xs leading-relaxed border border-slate-300 shadow-md space-y-2 select-text"
             >
               <div className="text-center pb-2 border-b border-dashed border-slate-400">
                 <h3 className="font-black text-sm uppercase tracking-wider">{tenant.name}</h3>
@@ -350,9 +358,9 @@ export function ShiftsManagementClient({ data }: ShiftsClientProps) {
             <button
               type="button"
               onClick={() => window.print()}
-              className="w-full py-3 rounded-xl bg-slate-800 hover:bg-slate-700 text-white font-bold text-xs flex items-center justify-center gap-2 border border-slate-700 cursor-pointer"
+              className="w-full py-3 rounded-xl bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-900 dark:text-white font-bold text-xs flex items-center justify-center gap-2 border border-slate-300 dark:border-slate-700 cursor-pointer"
             >
-              <Printer className="w-4 h-4 text-emerald-400" />
+              <Printer className="w-4 h-4 text-emerald-600 dark:text-emerald-400" />
               <span>Print Z-Report Slip</span>
             </button>
           </div>
@@ -363,34 +371,34 @@ export function ShiftsManagementClient({ data }: ShiftsClientProps) {
       {/* MODAL 2: Close Active Shift Modal                        */}
       {/* ======================================================== */}
       {isCloseModalOpen && activeShift && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-sm p-4">
-          <div className="w-full max-w-md rounded-3xl bg-slate-900 border border-slate-800 p-6 shadow-2xl space-y-4 relative">
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 backdrop-blur-xs p-4">
+          <div className="w-full max-w-md rounded-3xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 p-6 shadow-2xl space-y-4 relative">
             <button
               onClick={() => setIsCloseModalOpen(false)}
-              className="absolute top-4 right-4 text-slate-400 hover:text-white"
+              className="absolute top-4 right-4 text-slate-400 hover:text-slate-700 dark:hover:text-white"
             >
               <X className="w-5 h-5" />
             </button>
 
             <div>
-              <h3 className="text-lg font-bold text-white">Count Cash & Close Shift</h3>
-              <p className="text-xs text-slate-400">Perform physical drawer count reconciliation</p>
+              <h3 className="text-lg font-black text-slate-900 dark:text-white">Count Cash & Close Shift</h3>
+              <p className="text-xs text-slate-500 dark:text-slate-400">Perform physical drawer count reconciliation</p>
             </div>
 
-            <div className="p-4 rounded-xl bg-slate-950 border border-slate-800 space-y-2 text-xs">
+            <div className="p-4 rounded-xl bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 space-y-2 text-xs">
               <div className="flex justify-between">
-                <span className="text-slate-400">Opening Float:</span>
-                <span className="font-mono text-white">{tenant.currency} {parseFloat(activeShift.openingFloat).toFixed(2)}</span>
+                <span className="text-slate-500 dark:text-slate-400">Opening Float:</span>
+                <span className="font-mono text-slate-900 dark:text-white">{tenant.currency} {parseFloat(activeShift.openingFloat).toFixed(2)}</span>
               </div>
               <div className="flex justify-between font-bold">
-                <span className="text-slate-400">System Expected Cash:</span>
-                <span className="font-mono text-emerald-400">{tenant.currency} {parseFloat(activeShift.expectedCash).toFixed(2)}</span>
+                <span className="text-slate-500 dark:text-slate-400">System Expected Cash:</span>
+                <span className="font-mono text-emerald-600 dark:text-emerald-400">{tenant.currency} {parseFloat(activeShift.expectedCash).toFixed(2)}</span>
               </div>
             </div>
 
             <form onSubmit={handleCloseShift} className="space-y-3.5">
               <div>
-                <label className="block text-xs font-bold uppercase text-slate-400 mb-1">
+                <label className="block text-xs font-bold uppercase text-slate-600 dark:text-slate-400 mb-1">
                   Actual Counted Cash in Drawer ({tenant.currency})
                 </label>
                 <input
@@ -400,12 +408,12 @@ export function ShiftsManagementClient({ data }: ShiftsClientProps) {
                   value={countedCashInput}
                   onChange={(e) => setCountedCashInput(e.target.value)}
                   placeholder="e.g. 15450.00"
-                  className="w-full px-4 py-3 rounded-xl bg-slate-950 border border-slate-800 text-white font-mono text-lg font-bold focus:outline-none focus:border-amber-500"
+                  className="w-full px-4 py-3 rounded-xl bg-slate-50 dark:bg-slate-950 border border-slate-300 dark:border-slate-800 text-slate-900 dark:text-white font-mono text-lg font-bold focus:outline-none focus:border-amber-500"
                 />
               </div>
 
               <div>
-                <label className="block text-xs font-bold uppercase text-slate-400 mb-1">
+                <label className="block text-xs font-bold uppercase text-slate-600 dark:text-slate-400 mb-1">
                   Reconciliation Notes
                 </label>
                 <input
@@ -413,7 +421,7 @@ export function ShiftsManagementClient({ data }: ShiftsClientProps) {
                   value={notesInput}
                   onChange={(e) => setNotesInput(e.target.value)}
                   placeholder="e.g. Drawer balanced perfectly"
-                  className="w-full px-3.5 py-2 rounded-xl bg-slate-950 border border-slate-800 text-white text-xs"
+                  className="w-full px-3.5 py-2 rounded-xl bg-slate-50 dark:bg-slate-950 border border-slate-300 dark:border-slate-800 text-slate-900 dark:text-white text-xs"
                 />
               </div>
 

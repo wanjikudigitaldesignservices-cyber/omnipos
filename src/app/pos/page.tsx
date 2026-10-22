@@ -14,7 +14,7 @@ export default async function PosPage() {
   }
 
   return (
-    <div className="h-screen bg-slate-950 text-slate-100 flex flex-col overflow-hidden">
+    <div className="h-screen bg-slate-100 dark:bg-slate-950 text-slate-900 dark:text-slate-100 flex flex-col overflow-hidden transition-colors duration-150">
       <WorkspaceNav user={data.user} tenant={data.tenant} activeShift={data.activeShift} />
       <main className="flex-1 overflow-hidden">
         <PosTerminalClient

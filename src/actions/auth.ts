@@ -288,8 +288,11 @@ export async function completeOnboardingAction(formData: FormData) {
       })
       .where(eq(tenants.id, session.tenant.id));
 
-    // 3. Seed 5 realistic industry products and categories
-    await seedIndustryData(session.tenant.id, session.user.id, businessType);
+    // 3. Seed demo products ONLY if explicitly opted in by user (defaults to clean catalog)
+    const seedDemoCatalog = formData.get("seedDemoCatalog") === "true";
+    if (seedDemoCatalog) {
+      await seedIndustryData(session.tenant.id, session.user.id, businessType);
+    }
 
     // 4. Update session token with onboardingCompleted = true
     await createSession(

@@ -1,9 +1,9 @@
 "use server";
 
 import { db } from "@/db";
-import { tenants, users } from "@/db/schema";
+import { tenants, users, orderItems, orders, inventoryLedger, products, categories, customers, registerShifts } from "@/db/schema";
 import { getSession, hashPassword, hashPin } from "@/lib/auth";
-import { eq, and, desc } from "drizzle-orm";
+import { eq, and, desc, sql } from "drizzle-orm";
 import { revalidatePath } from "next/cache";
 
 export async function getSettingsData() {
@@ -154,5 +154,42 @@ export async function toggleStaffStatusAction(userId: string, isActive: boolean)
     return { success: true };
   } catch (error: any) {
     return { success: false, error: error.message || "Failed to update staff status." };
+  }
+}
+
+export async function clearAllDemoDataAction() {
+  try {
+    const session = await getSession();
+    if (!session) return { success: false, error: "Unauthorized session." };
+
+    if (session.user.role !== "OWNER") {
+      return { success: false, error: "Only the business Owner can reset store data." };
+    }
+
+    const tenantId = session.tenant.id;
+
+    // Delete in sequence to respect foreign key constraints
+    await db.delete(orderItems).where(
+      sql`order_id IN (SELECT id FROM ${orders} WHERE tenant_id = ${tenantId})`
+    );
+    await db.delete(orders).where(eq(orders.tenantId, tenantId));
+    await db.delete(inventoryLedger).where(eq(inventoryLedger.tenantId, tenantId));
+    await db.delete(products).where(eq(products.tenantId, tenantId));
+    await db.delete(categories).where(eq(categories.tenantId, tenantId));
+    await db.delete(customers).where(eq(customers.tenantId, tenantId));
+    await db.delete(registerShifts).where(eq(registerShifts.tenantId, tenantId));
+
+    revalidatePath("/dashboard");
+    revalidatePath("/dashboard/inventory");
+    revalidatePath("/dashboard/orders");
+    revalidatePath("/dashboard/shifts");
+    revalidatePath("/dashboard/customers");
+    revalidatePath("/dashboard/settings");
+    revalidatePath("/pos");
+
+    return { success: true };
+  } catch (error: any) {
+    console.error("clearAllDemoDataAction error:", error);
+    return { success: false, error: error.message || "Failed to clear demo data." };
   }
 }

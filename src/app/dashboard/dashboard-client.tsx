@@ -8,16 +8,10 @@ import {
   ShoppingBag,
   AlertTriangle,
   Clock,
-  ArrowUpRight,
   ArrowRight,
-  CreditCard,
-  Banknote,
-  Smartphone,
-  BookOpen,
-  Calendar,
-  Layers,
   ChevronRight,
   Sparkles,
+  BookOpen,
 } from "lucide-react";
 import {
   ResponsiveContainer,
@@ -31,6 +25,7 @@ import {
   Pie,
   Cell,
 } from "recharts";
+import { OmniAIAdvisor } from "@/components/omni-ai-advisor";
 
 interface ExecutiveAnalyticsProps {
   data: {
@@ -79,17 +74,17 @@ export function DashboardExecutiveClient({ data }: ExecutiveAnalyticsProps) {
   const { tenant, metrics, paymentBreakdown, salesTrend, lowStockAlerts, expiringAlerts, recentOrders } = data;
 
   return (
-    <div className="p-6 md:p-8 space-y-8 max-w-7xl mx-auto">
+    <div className="p-6 md:p-8 space-y-8 max-w-7xl mx-auto transition-colors duration-150">
       {/* Top Banner / Welcome */}
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div>
-          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-semibold bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 mb-2">
+          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-bold bg-emerald-50 dark:bg-emerald-500/10 text-emerald-700 dark:text-emerald-400 border border-emerald-200 dark:border-emerald-500/20 mb-2">
             <Sparkles className="w-3.5 h-3.5" /> Executive Cockpit & Real-Time Aggregates
           </div>
-          <h1 className="text-3xl font-black text-white tracking-tight">
+          <h1 className="text-3xl font-black text-slate-900 dark:text-white tracking-tight">
             {tenant.name} Back-Office
           </h1>
-          <p className="text-slate-400 text-sm mt-0.5">
+          <p className="text-slate-600 dark:text-slate-400 text-sm mt-0.5">
             Real-time financial performance, inventory valuation, and multi-tender breakdown.
           </p>
         </div>
@@ -97,7 +92,7 @@ export function DashboardExecutiveClient({ data }: ExecutiveAnalyticsProps) {
         <div className="flex items-center gap-3">
           <Link
             href="/pos"
-            className="px-5 py-2.5 rounded-xl bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-black text-xs flex items-center gap-2 shadow-lg shadow-emerald-500/20 transition-all"
+            className="px-5 py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white dark:bg-emerald-500 dark:hover:bg-emerald-400 dark:text-slate-950 font-black text-xs flex items-center gap-2 shadow-lg shadow-emerald-600/20 transition-all cursor-pointer"
           >
             <span>Open Register Terminal</span>
             <ArrowRight className="w-4 h-4" />
@@ -108,91 +103,94 @@ export function DashboardExecutiveClient({ data }: ExecutiveAnalyticsProps) {
       {/* Metric KPI Cards Grid */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
         {/* Today's Revenue */}
-        <div className="p-5 rounded-2xl bg-slate-900 border border-slate-800 shadow-sm relative overflow-hidden">
-          <div className="flex items-center justify-between text-slate-400 text-xs font-bold uppercase tracking-wider mb-2">
+        <div className="p-5 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-sm relative overflow-hidden transition-colors duration-150">
+          <div className="flex items-center justify-between text-slate-500 dark:text-slate-400 text-xs font-bold uppercase tracking-wider mb-2">
             <span>Today's Sales</span>
-            <div className="p-2 rounded-xl bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">
+            <div className="p-2 rounded-xl bg-emerald-50 dark:bg-emerald-500/10 text-emerald-700 dark:text-emerald-400 border border-emerald-200 dark:border-emerald-500/20">
               <DollarSign className="w-4 h-4" />
             </div>
           </div>
-          <div className="text-2xl font-black text-white font-mono">
+          <div className="text-2xl font-black text-slate-900 dark:text-white font-mono">
             {tenant.currency} {metrics.todayRevenue.toFixed(2)}
           </div>
-          <div className="text-xs text-slate-400 mt-2 flex items-center gap-1.5">
-            <span className="font-bold text-emerald-400">{metrics.todayOrdersCount} orders</span>
+          <div className="text-xs text-slate-500 dark:text-slate-400 mt-2 flex items-center gap-1.5">
+            <span className="font-bold text-emerald-600 dark:text-emerald-400">{metrics.todayOrdersCount} orders</span>
             <span>completed today</span>
           </div>
         </div>
 
         {/* Net Gross Profit */}
-        <div className="p-5 rounded-2xl bg-slate-900 border border-slate-800 shadow-sm relative overflow-hidden">
-          <div className="flex items-center justify-between text-slate-400 text-xs font-bold uppercase tracking-wider mb-2">
+        <div className="p-5 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-sm relative overflow-hidden transition-colors duration-150">
+          <div className="flex items-center justify-between text-slate-500 dark:text-slate-400 text-xs font-bold uppercase tracking-wider mb-2">
             <span>Net Gross Profit</span>
-            <div className="p-2 rounded-xl bg-indigo-500/10 text-indigo-400 border border-indigo-500/20">
+            <div className="p-2 rounded-xl bg-indigo-50 dark:bg-indigo-500/10 text-indigo-700 dark:text-indigo-400 border border-indigo-200 dark:border-indigo-500/20">
               <TrendingUp className="w-4 h-4" />
             </div>
           </div>
-          <div className="text-2xl font-black text-indigo-400 font-mono">
+          <div className="text-2xl font-black text-indigo-700 dark:text-indigo-400 font-mono">
             {tenant.currency} {metrics.todayGrossProfit.toFixed(2)}
           </div>
-          <div className="text-xs text-slate-400 mt-2 flex items-center gap-1.5">
-            <span className="font-bold text-white">{metrics.profitMarginPercent}% margin</span>
+          <div className="text-xs text-slate-500 dark:text-slate-400 mt-2 flex items-center gap-1.5">
+            <span className="font-bold text-slate-900 dark:text-white">{metrics.profitMarginPercent}% margin</span>
             <span>(Sales minus Cost Price)</span>
           </div>
         </div>
 
         {/* Outstanding Deni / Tabs */}
-        <div className="p-5 rounded-2xl bg-slate-900 border border-slate-800 shadow-sm relative overflow-hidden">
-          <div className="flex items-center justify-between text-slate-400 text-xs font-bold uppercase tracking-wider mb-2">
+        <div className="p-5 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-sm relative overflow-hidden transition-colors duration-150">
+          <div className="flex items-center justify-between text-slate-500 dark:text-slate-400 text-xs font-bold uppercase tracking-wider mb-2">
             <span>Customer Debt (Deni)</span>
-            <div className="p-2 rounded-xl bg-amber-500/10 text-amber-400 border border-amber-500/20">
+            <div className="p-2 rounded-xl bg-amber-50 dark:bg-amber-500/10 text-amber-700 dark:text-amber-400 border border-amber-200 dark:border-amber-500/20">
               <BookOpen className="w-4 h-4" />
             </div>
           </div>
-          <div className="text-2xl font-black text-amber-400 font-mono">
+          <div className="text-2xl font-black text-amber-700 dark:text-amber-400 font-mono">
             {tenant.currency} {metrics.totalOutstandingDebt.toFixed(2)}
           </div>
-          <div className="text-xs text-slate-400 mt-2 flex items-center justify-between">
-            <Link href="/dashboard/customers" className="text-emerald-400 font-bold hover:underline">
+          <div className="text-xs text-slate-500 dark:text-slate-400 mt-2 flex items-center justify-between">
+            <Link href="/dashboard/customers" className="text-emerald-600 dark:text-emerald-400 font-bold hover:underline">
               View CRM Ledger &rarr;
             </Link>
           </div>
         </div>
 
         {/* Inventory Alerts */}
-        <div className="p-5 rounded-2xl bg-slate-900 border border-slate-800 shadow-sm relative overflow-hidden">
-          <div className="flex items-center justify-between text-slate-400 text-xs font-bold uppercase tracking-wider mb-2">
+        <div className="p-5 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-sm relative overflow-hidden transition-colors duration-150">
+          <div className="flex items-center justify-between text-slate-500 dark:text-slate-400 text-xs font-bold uppercase tracking-wider mb-2">
             <span>Urgent Stock Alerts</span>
-            <div className="p-2 rounded-xl bg-red-500/10 text-red-400 border border-red-500/20">
+            <div className="p-2 rounded-xl bg-red-50 dark:bg-red-500/10 text-red-700 dark:text-red-400 border border-red-200 dark:border-red-500/20">
               <AlertTriangle className="w-4 h-4" />
             </div>
           </div>
-          <div className="text-2xl font-black text-red-400 font-mono">
+          <div className="text-2xl font-black text-red-600 dark:text-red-400 font-mono">
             {metrics.lowStockCount + metrics.expiringCount}
           </div>
-          <div className="text-xs text-slate-400 mt-2 flex items-center gap-2">
-            <span className="text-amber-400 font-bold">{metrics.lowStockCount} low</span>
+          <div className="text-xs text-slate-500 dark:text-slate-400 mt-2 flex items-center gap-2">
+            <span className="text-amber-600 dark:text-amber-400 font-bold">{metrics.lowStockCount} low</span>
             <span>•</span>
-            <span className="text-red-400 font-bold">{metrics.expiringCount} expiring</span>
+            <span className="text-red-600 dark:text-red-400 font-bold">{metrics.expiringCount} expiring</span>
           </div>
         </div>
       </div>
 
+      {/* NEW FEATURE: OmniAI Business Copilot & Growth Advisor */}
+      <OmniAIAdvisor tenant={tenant} metrics={metrics} />
+
       {/* Charts Section: 7-Day Trend & Payment Split */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         {/* 7-Day Revenue & Profit Bar Chart */}
-        <div className="lg:col-span-2 p-6 rounded-3xl bg-slate-900 border border-slate-800 shadow-sm space-y-4">
+        <div className="lg:col-span-2 p-6 rounded-3xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-sm space-y-4 transition-colors duration-150">
           <div className="flex items-center justify-between">
             <div>
-              <h3 className="text-base font-bold text-white">7-Day Sales & Profit Performance</h3>
-              <p className="text-xs text-slate-400">Daily gross revenue vs. cost of goods margin</p>
+              <h3 className="text-base font-bold text-slate-900 dark:text-white">7-Day Sales & Profit Performance</h3>
+              <p className="text-xs text-slate-500 dark:text-slate-400">Daily gross revenue vs. cost of goods margin</p>
             </div>
             <div className="flex items-center gap-4 text-xs font-bold">
-              <div className="flex items-center gap-1.5 text-emerald-400">
+              <div className="flex items-center gap-1.5 text-emerald-600 dark:text-emerald-400">
                 <span className="w-3 h-3 rounded-md bg-emerald-500" />
                 <span>Revenue</span>
               </div>
-              <div className="flex items-center gap-1.5 text-indigo-400">
+              <div className="flex items-center gap-1.5 text-indigo-600 dark:text-indigo-400">
                 <span className="w-3 h-3 rounded-md bg-indigo-500" />
                 <span>Gross Profit</span>
               </div>
@@ -202,13 +200,13 @@ export function DashboardExecutiveClient({ data }: ExecutiveAnalyticsProps) {
           <div className="h-64 w-full pt-4">
             <ResponsiveContainer width="100%" height="100%">
               <BarChart data={salesTrend}>
-                <CartesianGrid strokeDasharray="3 3" stroke="#334155" opacity={0.3} />
+                <CartesianGrid strokeDasharray="3 3" stroke="#94a3b8" opacity={0.2} />
                 <XAxis dataKey="date" stroke="#64748b" fontSize={11} tickLine={false} />
                 <YAxis stroke="#64748b" fontSize={11} tickLine={false} />
                 <Tooltip
                   contentStyle={{
                     backgroundColor: "#0f172a",
-                    borderColor: "#1e293b",
+                    borderColor: "#334155",
                     borderRadius: "12px",
                     color: "#fff",
                     fontSize: "12px",
@@ -222,10 +220,10 @@ export function DashboardExecutiveClient({ data }: ExecutiveAnalyticsProps) {
         </div>
 
         {/* Payment Methods Split Pie Chart */}
-        <div className="p-6 rounded-3xl bg-slate-900 border border-slate-800 shadow-sm space-y-4 flex flex-col justify-between">
+        <div className="p-6 rounded-3xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-sm space-y-4 flex flex-col justify-between transition-colors duration-150">
           <div>
-            <h3 className="text-base font-bold text-white">Payment Method Split</h3>
-            <p className="text-xs text-slate-400">Tender breakdown of today's sales</p>
+            <h3 className="text-base font-bold text-slate-900 dark:text-white">Payment Method Split</h3>
+            <p className="text-xs text-slate-500 dark:text-slate-400">Tender breakdown of today's sales</p>
           </div>
 
           <div className="h-44 w-full relative">
@@ -248,7 +246,7 @@ export function DashboardExecutiveClient({ data }: ExecutiveAnalyticsProps) {
                 <Tooltip
                   contentStyle={{
                     backgroundColor: "#0f172a",
-                    borderColor: "#1e293b",
+                    borderColor: "#334155",
                     borderRadius: "12px",
                     color: "#fff",
                     fontSize: "12px",
@@ -258,9 +256,9 @@ export function DashboardExecutiveClient({ data }: ExecutiveAnalyticsProps) {
             </ResponsiveContainer>
           </div>
 
-          <div className="space-y-1.5 pt-2 border-t border-slate-800 text-xs">
+          <div className="space-y-1.5 pt-2 border-t border-slate-100 dark:border-slate-800 text-xs">
             {paymentBreakdown.map((item, idx) => (
-              <div key={item.key} className="flex items-center justify-between text-slate-300">
+              <div key={item.key} className="flex items-center justify-between text-slate-600 dark:text-slate-300">
                 <div className="flex items-center gap-2">
                   <span
                     className="w-2.5 h-2.5 rounded-full"
@@ -268,7 +266,7 @@ export function DashboardExecutiveClient({ data }: ExecutiveAnalyticsProps) {
                   />
                   <span>{item.method}</span>
                 </div>
-                <span className="font-mono font-bold text-white">
+                <span className="font-mono font-bold text-slate-900 dark:text-white">
                   {tenant.currency} {item.total.toFixed(2)}
                 </span>
               </div>
@@ -280,15 +278,15 @@ export function DashboardExecutiveClient({ data }: ExecutiveAnalyticsProps) {
       {/* Two Column Layout: Urgent Alerts & Recent Sales */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         {/* Stock & Expiry Alerts */}
-        <div className="p-6 rounded-3xl bg-slate-900 border border-slate-800 shadow-sm space-y-4">
+        <div className="p-6 rounded-3xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-sm space-y-4 transition-colors duration-150">
           <div className="flex items-center justify-between">
-            <h3 className="text-base font-bold text-white flex items-center gap-2">
-              <AlertTriangle className="w-4 h-4 text-amber-400" />
+            <h3 className="text-base font-bold text-slate-900 dark:text-white flex items-center gap-2">
+              <AlertTriangle className="w-4 h-4 text-amber-500" />
               <span>Low-Stock & Expiry Alarms</span>
             </h3>
             <Link
               href="/dashboard/inventory"
-              className="text-xs font-bold text-emerald-400 hover:underline flex items-center gap-1"
+              className="text-xs font-bold text-emerald-600 dark:text-emerald-400 hover:underline flex items-center gap-1"
             >
               Inventory Management <ChevronRight className="w-3.5 h-3.5" />
             </Link>
@@ -296,19 +294,19 @@ export function DashboardExecutiveClient({ data }: ExecutiveAnalyticsProps) {
 
           <div className="space-y-2.5">
             {lowStockAlerts.length === 0 && expiringAlerts.length === 0 ? (
-              <p className="text-xs text-slate-500 py-4 text-center">All inventory is at healthy stock levels.</p>
+              <p className="text-xs text-slate-500 py-6 text-center">All inventory is at healthy stock levels.</p>
             ) : (
               <>
                 {lowStockAlerts.map((p) => (
                   <div
                     key={p.id}
-                    className="p-3 rounded-xl bg-slate-950 border border-slate-800/80 flex items-center justify-between"
+                    className="p-3 rounded-xl bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800/80 flex items-center justify-between shadow-sm"
                   >
                     <div>
-                      <div className="font-bold text-white text-xs">{p.name}</div>
+                      <div className="font-bold text-slate-900 dark:text-white text-xs">{p.name}</div>
                       <div className="text-[10px] text-slate-500 font-mono">SKU: {p.sku || "N/A"}</div>
                     </div>
-                    <span className="px-2 py-0.5 rounded-md text-[11px] font-bold bg-amber-500/10 text-amber-400 border border-amber-500/20 font-mono">
+                    <span className="px-2 py-0.5 rounded-md text-[11px] font-bold bg-amber-50 dark:bg-amber-500/10 text-amber-700 dark:text-amber-400 border border-amber-200 dark:border-amber-500/20 font-mono">
                       {p.stockQuantity} {p.unit || "pcs"} left
                     </span>
                   </div>
@@ -317,15 +315,15 @@ export function DashboardExecutiveClient({ data }: ExecutiveAnalyticsProps) {
                 {expiringAlerts.map((p) => (
                   <div
                     key={p.id}
-                    className="p-3 rounded-xl bg-slate-950 border border-slate-800/80 flex items-center justify-between"
+                    className="p-3 rounded-xl bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800/80 flex items-center justify-between shadow-sm"
                   >
                     <div>
-                      <div className="font-bold text-white text-xs">{p.name}</div>
-                      <div className="text-[10px] text-red-400 font-medium">
+                      <div className="font-bold text-slate-900 dark:text-white text-xs">{p.name}</div>
+                      <div className="text-[10px] text-red-600 dark:text-red-400 font-medium">
                         Expires: {new Date(p.expiryDate).toLocaleDateString()}
                       </div>
                     </div>
-                    <span className="px-2 py-0.5 rounded-md text-[11px] font-bold bg-red-500/10 text-red-400 border border-red-500/20 font-mono">
+                    <span className="px-2 py-0.5 rounded-md text-[11px] font-bold bg-red-50 dark:bg-red-500/10 text-red-700 dark:text-red-400 border border-red-200 dark:border-red-500/20 font-mono">
                       Expiring Soon
                     </span>
                   </div>
@@ -336,37 +334,37 @@ export function DashboardExecutiveClient({ data }: ExecutiveAnalyticsProps) {
         </div>
 
         {/* Today's Recent Sales Activity */}
-        <div className="p-6 rounded-3xl bg-slate-900 border border-slate-800 shadow-sm space-y-4">
+        <div className="p-6 rounded-3xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-sm space-y-4 transition-colors duration-150">
           <div className="flex items-center justify-between">
-            <h3 className="text-base font-bold text-white flex items-center gap-2">
-              <ShoppingBag className="w-4 h-4 text-emerald-400" />
+            <h3 className="text-base font-bold text-slate-900 dark:text-white flex items-center gap-2">
+              <ShoppingBag className="w-4 h-4 text-emerald-600 dark:text-emerald-400" />
               <span>Today's Transactions</span>
             </h3>
             <Link
               href="/dashboard/orders"
-              className="text-xs font-bold text-emerald-400 hover:underline flex items-center gap-1"
+              className="text-xs font-bold text-emerald-600 dark:text-emerald-400 hover:underline flex items-center gap-1"
             >
-              All Orders & Refunds <ChevronRight className="w-3.5 h-3.5" />
+              All Orders & Receipts <ChevronRight className="w-3.5 h-3.5" />
             </Link>
           </div>
 
           <div className="space-y-2">
             {recentOrders.length === 0 ? (
-              <p className="text-xs text-slate-500 py-4 text-center">No transactions recorded yet today.</p>
+              <p className="text-xs text-slate-500 py-6 text-center">No transactions recorded yet today.</p>
             ) : (
               recentOrders.map((o) => (
                 <div
                   key={o.id}
-                  className="p-3 rounded-xl bg-slate-950 border border-slate-800/80 flex items-center justify-between"
+                  className="p-3 rounded-xl bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800/80 flex items-center justify-between shadow-sm"
                 >
                   <div>
-                    <div className="font-bold text-white text-xs font-mono">{o.receiptNumber}</div>
-                    <div className="text-[10px] text-slate-400">
-                      {o.paymentMethod.replace("_", " ")} • {o.items?.length || 0} items
+                    <div className="font-bold text-slate-900 dark:text-white text-xs font-mono">{o.receiptNumber}</div>
+                    <div className="text-[10px] text-slate-500 dark:text-slate-400">
+                      {o.paymentMethod.replace(/_/g, " ")} • {o.items?.length || 0} items
                     </div>
                   </div>
                   <div className="text-right">
-                    <span className="font-mono font-bold text-emerald-400 text-xs block">
+                    <span className="font-mono font-bold text-emerald-600 dark:text-emerald-400 text-xs block">
                       {tenant.currency} {parseFloat(o.totalAmount).toFixed(2)}
                     </span>
                     <span className="text-[9px] text-slate-500">

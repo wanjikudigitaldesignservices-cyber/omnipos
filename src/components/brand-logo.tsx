@@ -43,10 +43,10 @@ export function BrandLogo({
         </div>
         {!iconOnly && (
           <div className="flex flex-col">
-            <span className={`font-black tracking-tight text-slate-100 ${currentSize.text}`}>
+            <span className={`font-black tracking-tight text-slate-900 dark:text-slate-100 ${currentSize.text}`}>
               {customName || "OmniPOS"}
             </span>
-            <span className={`font-medium tracking-wider text-emerald-400 uppercase ${currentSize.sub}`}>
+            <span className={`font-bold tracking-wider text-emerald-600 dark:text-emerald-400 uppercase ${currentSize.sub}`}>
               Verified SME
             </span>
           </div>
@@ -59,7 +59,7 @@ export function BrandLogo({
   return (
     <div className={`flex items-center gap-3 select-none ${className}`}>
       <div
-        className="relative flex items-center justify-center rounded-xl bg-gradient-to-tr from-emerald-600 via-teal-500 to-indigo-600 p-2 shadow-lg shadow-emerald-500/20"
+        className="relative flex items-center justify-center rounded-xl bg-gradient-to-tr from-emerald-600 via-teal-500 to-indigo-600 p-2 shadow-lg shadow-emerald-500/20 shrink-0"
         style={{ width: currentSize.icon, height: currentSize.icon }}
       >
         {/* Isometric Cube + Barcode Symbol SVG */}
@@ -101,11 +101,11 @@ export function BrandLogo({
       {!iconOnly && (
         <div className="flex flex-col">
           <div className="flex items-center gap-1">
-            <span className={`font-extrabold tracking-tight text-white ${currentSize.text}`}>
-              Omni<span className="text-emerald-400">POS</span>
+            <span className={`font-extrabold tracking-tight text-slate-900 dark:text-white ${currentSize.text}`}>
+              Omni<span className="text-emerald-600 dark:text-emerald-400">POS</span>
             </span>
           </div>
-          <span className={`font-semibold tracking-widest text-slate-400 uppercase ${currentSize.sub}`}>
+          <span className={`font-semibold tracking-widest text-slate-500 dark:text-slate-400 uppercase ${currentSize.sub}`}>
             Universal SME ERP
           </span>
         </div>
