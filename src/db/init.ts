@@ -266,14 +266,51 @@ export async function ensureDatabaseTables() {
       );
     `;
 
-    // 15. Column Migrations (Non-destructive idempotent additions)
+    // 15. Suppliers (Vendor Directory & Purchase Ledger)
+    await sql`
+      CREATE TABLE IF NOT EXISTS suppliers (
+        id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+        tenant_id UUID NOT NULL REFERENCES tenants(id) ON DELETE CASCADE,
+        name TEXT NOT NULL,
+        contact_person TEXT,
+        phone TEXT,
+        email TEXT,
+        address TEXT,
+        payment_terms TEXT DEFAULT 'CASH_ON_DELIVERY' NOT NULL,
+        outstanding_balance NUMERIC(14, 4) DEFAULT 0.0000 NOT NULL,
+        mpesa_paybill_number TEXT,
+        bank_details TEXT,
+        notes TEXT,
+        created_at TIMESTAMPTZ DEFAULT NOW() NOT NULL
+      );
+    `;
+
+    // 16. Expenses (Petty Cash, Utilities, Rent, Transport)
+    await sql`
+      CREATE TABLE IF NOT EXISTS expenses (
+        id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+        tenant_id UUID NOT NULL REFERENCES tenants(id) ON DELETE CASCADE,
+        user_id UUID REFERENCES users(id) ON DELETE SET NULL,
+        category TEXT DEFAULT 'OTHER' NOT NULL,
+        amount NUMERIC(14, 4) DEFAULT 0.0000 NOT NULL,
+        payment_method TEXT DEFAULT 'CASH' NOT NULL,
+        recipient_name TEXT,
+        description TEXT NOT NULL,
+        reference_number TEXT,
+        receipt_url TEXT,
+        expense_date TIMESTAMPTZ DEFAULT NOW() NOT NULL,
+        created_at TIMESTAMPTZ DEFAULT NOW() NOT NULL
+      );
+    `;
+
+    // 17. Column Migrations (Non-destructive idempotent additions)
     await sql`ALTER TABLE products ADD COLUMN IF NOT EXISTS parent_product_id UUID REFERENCES products(id) ON DELETE SET NULL;`;
     await sql`ALTER TABLE products ADD COLUMN IF NOT EXISTS conversion_factor NUMERIC(14, 4);`;
     await sql`ALTER TABLE products ADD COLUMN IF NOT EXISTS is_fractional BOOLEAN DEFAULT false;`;
     await sql`ALTER TABLE products ADD COLUMN IF NOT EXISTS tax_category TEXT DEFAULT 'STANDARD';`;
     await sql`ALTER TABLE products ADD COLUMN IF NOT EXISTS hs_code TEXT;`;
 
-    // 16. Performance indexes
+    // 18. Performance indexes
     await sql`CREATE INDEX IF NOT EXISTS tenants_slug_idx ON tenants (slug);`;
     await sql`CREATE INDEX IF NOT EXISTS users_tenant_idx ON users (tenant_id);`;
     await sql`CREATE INDEX IF NOT EXISTS users_email_idx ON users (email);`;
@@ -288,6 +325,9 @@ export async function ensureDatabaseTables() {
     await sql`CREATE INDEX IF NOT EXISTS unit_conversions_bulk_idx ON product_unit_conversions (bulk_product_id);`;
     await sql`CREATE INDEX IF NOT EXISTS supplier_invoices_tenant_idx ON supplier_invoices (tenant_id);`;
     await sql`CREATE INDEX IF NOT EXISTS ai_conversations_tenant_idx ON ai_conversations (tenant_id);`;
+    await sql`CREATE INDEX IF NOT EXISTS suppliers_tenant_idx ON suppliers (tenant_id);`;
+    await sql`CREATE INDEX IF NOT EXISTS expenses_tenant_idx ON expenses (tenant_id);`;
+    await sql`CREATE INDEX IF NOT EXISTS expenses_date_idx ON expenses (expense_date);`;
 
     return { success: true };
   } catch (error) {

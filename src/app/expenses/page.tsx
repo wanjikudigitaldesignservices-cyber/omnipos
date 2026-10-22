@@ -1,5 +1,5 @@
 import { redirect } from "next/navigation";
 
 export default function ExpensesRedirect() {
-  redirect("/dashboard/shifts");
+  redirect("/dashboard/expenses");
 }

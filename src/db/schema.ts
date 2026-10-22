@@ -387,6 +387,57 @@ export const aiConversations = pgTable(
   ]
 );
 
+// 13. Suppliers (Vendor Directory, Purchasing & Payment Terms)
+export const suppliers = pgTable(
+  "suppliers",
+  {
+    id: uuid("id").primaryKey().defaultRandom(),
+    tenantId: uuid("tenant_id")
+      .references(() => tenants.id, { onDelete: "cascade" })
+      .notNull(),
+    name: text("name").notNull(),
+    contactPerson: text("contact_person"),
+    phone: text("phone"),
+    email: text("email"),
+    address: text("address"),
+    paymentTerms: text("payment_terms").default("CASH_ON_DELIVERY").notNull(), // CASH_ON_DELIVERY, NET_7, NET_14, NET_30
+    outstandingBalance: numeric("outstanding_balance", { precision: 14, scale: 4 }).default("0.0000").notNull(),
+    mpesaPaybillNumber: text("mpesa_paybill_number"),
+    bankDetails: text("bank_details"),
+    notes: text("notes"),
+    createdAt: timestamp("created_at", { withTimezone: true }).defaultNow().notNull(),
+  },
+  (table) => [
+    index("suppliers_tenant_idx").on(table.tenantId),
+  ]
+);
+
+// 14. Expenses (Petty Cash, Utilities, Rent, Transport & Operations)
+export const expenses = pgTable(
+  "expenses",
+  {
+    id: uuid("id").primaryKey().defaultRandom(),
+    tenantId: uuid("tenant_id")
+      .references(() => tenants.id, { onDelete: "cascade" })
+      .notNull(),
+    userId: uuid("user_id")
+      .references(() => users.id, { onDelete: "set null" }),
+    category: text("category").default("OTHER").notNull(), // RENT, UTILITIES_KPLC, WATER, WAGES, TRANSPORT_BODA, PACKAGING, STOCK_PURCHASE, TAXES_LICENSES, MAINTENANCE, OTHER
+    amount: numeric("amount", { precision: 14, scale: 4 }).default("0.0000").notNull(),
+    paymentMethod: text("payment_method").default("CASH").notNull(), // CASH, MPESA, BANK, CREDIT
+    recipientName: text("recipient_name"),
+    description: text("description").notNull(),
+    referenceNumber: text("reference_number"),
+    receiptUrl: text("receipt_url"),
+    expenseDate: timestamp("expense_date", { withTimezone: true }).defaultNow().notNull(),
+    createdAt: timestamp("created_at", { withTimezone: true }).defaultNow().notNull(),
+  },
+  (table) => [
+    index("expenses_tenant_idx").on(table.tenantId),
+    index("expenses_date_idx").on(table.expenseDate),
+  ]
+);
+
 // ==========================================
 // 3. RELATIONS
 // ==========================================
@@ -402,6 +453,8 @@ export const tenantsRelations = relations(tenants, ({ many }) => ({
   productUnitConversions: many(productUnitConversions),
   supplierInvoices: many(supplierInvoices),
   aiConversations: many(aiConversations),
+  suppliers: many(suppliers),
+  expenses: many(expenses),
 }));
 
 export const usersRelations = relations(users, ({ one, many }) => ({
@@ -414,6 +467,7 @@ export const usersRelations = relations(users, ({ one, many }) => ({
   orders: many(orders),
   supplierInvoices: many(supplierInvoices),
   aiConversations: many(aiConversations),
+  expenses: many(expenses),
 }));
 
 export const sessionsRelations = relations(sessions, ({ one }) => ({
@@ -544,6 +598,24 @@ export const aiConversationsRelations = relations(aiConversations, ({ one }) => 
   }),
 }));
 
+export const suppliersRelations = relations(suppliers, ({ one }) => ({
+  tenant: one(tenants, {
+    fields: [suppliers.tenantId],
+    references: [tenants.id],
+  }),
+}));
+
+export const expensesRelations = relations(expenses, ({ one }) => ({
+  tenant: one(tenants, {
+    fields: [expenses.tenantId],
+    references: [tenants.id],
+  }),
+  user: one(users, {
+    fields: [expenses.userId],
+    references: [users.id],
+  }),
+}));
+
 // Types
 export type Tenant = typeof tenants.$inferSelect;
 export type NewTenant = typeof tenants.$inferInsert;
@@ -570,4 +642,9 @@ export type SupplierInvoice = typeof supplierInvoices.$inferSelect;
 export type NewSupplierInvoice = typeof supplierInvoices.$inferInsert;
 export type AiConversation = typeof aiConversations.$inferSelect;
 export type NewAiConversation = typeof aiConversations.$inferInsert;
+export type Supplier = typeof suppliers.$inferSelect;
+export type NewSupplier = typeof suppliers.$inferInsert;
+export type Expense = typeof expenses.$inferSelect;
+export type NewExpense = typeof expenses.$inferInsert;
+
 

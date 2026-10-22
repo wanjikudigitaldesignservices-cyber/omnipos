@@ -18,6 +18,10 @@ import {
   ChevronRight,
   ShieldCheck,
   Sparkles,
+  Truck,
+  DollarSign,
+  HelpCircle,
+  TrendingUp,
 } from "lucide-react";
 
 import { ThemeToggle } from "@/components/theme-toggle";
@@ -41,12 +45,15 @@ export function DashboardSidebar({ tenant, user }: DashboardSidebarProps) {
   const [showCopilot, setShowCopilot] = useState(false);
 
   const navItems = [
-    { href: "/dashboard", label: "Executive Analytics", icon: LayoutDashboard },
+    { href: "/dashboard", label: "Executive Analytics", icon: TrendingUp },
     { href: "/dashboard/inventory", label: "Inventory & Stock", icon: Package },
-    { href: "/dashboard/orders", label: "Sales & Receipts", icon: Receipt },
+    { href: "/dashboard/suppliers", label: "Suppliers & Vendors", icon: Truck },
+    { href: "/dashboard/orders", label: "Sales & Orders", icon: Receipt },
+    { href: "/dashboard/expenses", label: "Expenses & Petty Cash", icon: DollarSign },
     { href: "/dashboard/shifts", label: "Shifts & Z-Reports", icon: Clock },
-    { href: "/dashboard/customers", label: "CRM & Debt Manager", icon: Users },
-    { href: "/dashboard/settings", label: "Business & Staff", icon: Settings },
+    { href: "/dashboard/customers", label: "Customers & Debts", icon: Users },
+    { href: "/dashboard/settings", label: "Business Settings", icon: Settings },
+    { href: "/dashboard/help", label: "Help & Diagnostics", icon: HelpCircle },
   ];
 
   return (
