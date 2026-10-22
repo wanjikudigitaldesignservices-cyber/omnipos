@@ -27,7 +27,11 @@ import {
   Layers,
   Sparkles,
   Store,
+  Camera,
+  Scale,
 } from "lucide-react";
+import { VisionInvoiceModal } from "@/components/vision-invoice-modal";
+import { KadogoUnitConverter } from "@/components/kadogo-unit-converter";
 
 interface InventoryClientProps {
   data: {
@@ -61,9 +65,12 @@ export function InventoryManagementClient({ data }: InventoryClientProps) {
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [isRestockModalOpen, setIsRestockModalOpen] = useState(false);
   const [isAddCategoryModalOpen, setIsAddCategoryModalOpen] = useState(false);
+  const [isVisionModalOpen, setIsVisionModalOpen] = useState(false);
+  const [isKadogoModalOpen, setIsKadogoModalOpen] = useState(false);
 
-  // Selected Product for Edit / Restock
+  // Selected Product for Edit / Restock / Kadogo breaking
   const [selectedProduct, setSelectedProduct] = useState<any | null>(null);
+  const [kadogoSelectedProduct, setKadogoSelectedProduct] = useState<any | null>(null);
 
   // Form states
   const [restockQty, setRestockQty] = useState("");
@@ -128,7 +135,15 @@ export function InventoryManagementClient({ data }: InventoryClientProps) {
           </p>
         </div>
 
-        <div className="flex items-center gap-2.5">
+        <div className="flex flex-wrap items-center gap-2.5">
+          <button
+            type="button"
+            onClick={() => setIsVisionModalOpen(true)}
+            className="px-4 py-2.5 rounded-xl bg-gradient-to-r from-indigo-600 to-violet-600 hover:from-indigo-500 hover:to-violet-500 text-white font-bold text-xs flex items-center gap-2 shadow-md shadow-indigo-600/20 cursor-pointer transition-all"
+          >
+            <Camera className="w-4 h-4" />
+            <span>Scan Docket (Vision AI)</span>
+          </button>
           <button
             type="button"
             onClick={() => setIsAddCategoryModalOpen(true)}
@@ -351,6 +366,18 @@ export function InventoryManagementClient({ data }: InventoryClientProps) {
                           </td>
                           <td className="px-5 py-4 text-right">
                             <div className="flex items-center justify-end gap-2">
+                              <button
+                                type="button"
+                                onClick={() => {
+                                  setKadogoSelectedProduct(p);
+                                  setIsKadogoModalOpen(true);
+                                }}
+                                title="Break bulk product into fractional Kadogo micro-units"
+                                className="px-2.5 py-1.5 rounded-lg bg-amber-50 dark:bg-amber-500/10 hover:bg-amber-100 dark:hover:bg-amber-500/20 text-amber-700 dark:text-amber-400 border border-amber-200 dark:border-amber-500/20 text-xs font-bold cursor-pointer transition-all flex items-center gap-1"
+                              >
+                                <Scale className="w-3.5 h-3.5" />
+                                <span className="hidden lg:inline">Kadogo Units</span>
+                              </button>
                               <button
                                 type="button"
                                 onClick={() => {
@@ -853,6 +880,38 @@ export function InventoryManagementClient({ data }: InventoryClientProps) {
           </div>
         </div>
       )}
+
+      {/* Multimodal Supplier Vision Invoice Ingestion Modal */}
+      <VisionInvoiceModal
+        isOpen={isVisionModalOpen}
+        onClose={() => setIsVisionModalOpen(false)}
+        currency={tenant.currency}
+        onSuccess={() => {
+          setIsVisionModalOpen(false);
+          window.location.reload();
+        }}
+        onOpenKadogoConverter={(prod) => {
+          setIsVisionModalOpen(false);
+          setKadogoSelectedProduct(prod);
+          setIsKadogoModalOpen(true);
+        }}
+      />
+
+      {/* Kadogo Fractional Unit Converter & Margin Protection Modal */}
+      <KadogoUnitConverter
+        isOpen={isKadogoModalOpen}
+        onClose={() => {
+          setIsKadogoModalOpen(false);
+          setKadogoSelectedProduct(null);
+        }}
+        product={kadogoSelectedProduct}
+        currency={tenant.currency}
+        onSuccess={() => {
+          setIsKadogoModalOpen(false);
+          setKadogoSelectedProduct(null);
+          window.location.reload();
+        }}
+      />
     </div>
   );
 }

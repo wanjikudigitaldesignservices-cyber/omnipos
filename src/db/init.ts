@@ -211,24 +211,83 @@ export async function ensureDatabaseTables() {
         product_id UUID NOT NULL REFERENCES products(id) ON DELETE CASCADE,
         user_id UUID REFERENCES users(id) ON DELETE SET NULL,
         type ledger_type NOT NULL,
-        quantity_change NUMERIC(12, 2) NOT NULL,
-        previous_stock NUMERIC(12, 2) NOT NULL,
-        new_stock NUMERIC(12, 2) NOT NULL,
+        quantity_change NUMERIC(14, 4) NOT NULL,
+        previous_stock NUMERIC(14, 4) NOT NULL,
+        new_stock NUMERIC(14, 4) NOT NULL,
         reference_note TEXT,
         created_at TIMESTAMPTZ DEFAULT NOW() NOT NULL
       );
     `;
 
-    // 12. Create performance indexes
+    // 12. Kadogo Fractional Unit Conversions
+    await sql`
+      CREATE TABLE IF NOT EXISTS product_unit_conversions (
+        id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+        tenant_id UUID NOT NULL REFERENCES tenants(id) ON DELETE CASCADE,
+        bulk_product_id UUID NOT NULL REFERENCES products(id) ON DELETE CASCADE,
+        unit_name TEXT NOT NULL,
+        unit_code TEXT NOT NULL,
+        ratio_to_bulk NUMERIC(14, 4) NOT NULL,
+        selling_price NUMERIC(14, 4) NOT NULL,
+        cost_price NUMERIC(14, 4) NOT NULL,
+        target_margin_percent NUMERIC(6, 2) DEFAULT 15.00 NOT NULL,
+        created_at TIMESTAMPTZ DEFAULT NOW() NOT NULL
+      );
+    `;
+
+    // 13. Supplier Invoices (Vision OCR Delivery Receipts)
+    await sql`
+      CREATE TABLE IF NOT EXISTS supplier_invoices (
+        id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+        tenant_id UUID NOT NULL REFERENCES tenants(id) ON DELETE CASCADE,
+        user_id UUID REFERENCES users(id) ON DELETE SET NULL,
+        supplier_name TEXT NOT NULL,
+        invoice_number TEXT,
+        invoice_date TIMESTAMPTZ,
+        total_amount NUMERIC(14, 4) DEFAULT 0.0000 NOT NULL,
+        raw_ocr_text TEXT,
+        extracted_items_json JSONB,
+        image_url TEXT,
+        status TEXT DEFAULT 'PENDING_REVIEW' NOT NULL,
+        created_at TIMESTAMPTZ DEFAULT NOW() NOT NULL
+      );
+    `;
+
+    // 14. AI Conversations (Copilot & WhatsApp Drawer)
+    await sql`
+      CREATE TABLE IF NOT EXISTS ai_conversations (
+        id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+        tenant_id UUID NOT NULL REFERENCES tenants(id) ON DELETE CASCADE,
+        user_id UUID REFERENCES users(id) ON DELETE SET NULL,
+        channel TEXT DEFAULT 'DRAWER' NOT NULL,
+        title TEXT DEFAULT 'New Conversation' NOT NULL,
+        messages_json JSONB DEFAULT '[]'::jsonb NOT NULL,
+        last_interacted_at TIMESTAMPTZ DEFAULT NOW() NOT NULL
+      );
+    `;
+
+    // 15. Column Migrations (Non-destructive idempotent additions)
+    await sql`ALTER TABLE products ADD COLUMN IF NOT EXISTS parent_product_id UUID REFERENCES products(id) ON DELETE SET NULL;`;
+    await sql`ALTER TABLE products ADD COLUMN IF NOT EXISTS conversion_factor NUMERIC(14, 4);`;
+    await sql`ALTER TABLE products ADD COLUMN IF NOT EXISTS is_fractional BOOLEAN DEFAULT false;`;
+    await sql`ALTER TABLE products ADD COLUMN IF NOT EXISTS tax_category TEXT DEFAULT 'STANDARD';`;
+    await sql`ALTER TABLE products ADD COLUMN IF NOT EXISTS hs_code TEXT;`;
+
+    // 16. Performance indexes
     await sql`CREATE INDEX IF NOT EXISTS tenants_slug_idx ON tenants (slug);`;
     await sql`CREATE INDEX IF NOT EXISTS users_tenant_idx ON users (tenant_id);`;
     await sql`CREATE INDEX IF NOT EXISTS users_email_idx ON users (email);`;
     await sql`CREATE INDEX IF NOT EXISTS products_tenant_idx ON products (tenant_id);`;
     await sql`CREATE INDEX IF NOT EXISTS products_barcode_idx ON products (barcode);`;
+    await sql`CREATE INDEX IF NOT EXISTS products_parent_idx ON products (parent_product_id);`;
     await sql`CREATE INDEX IF NOT EXISTS orders_tenant_idx ON orders (tenant_id);`;
     await sql`CREATE INDEX IF NOT EXISTS orders_receipt_idx ON orders (receipt_number);`;
     await sql`CREATE INDEX IF NOT EXISTS order_items_order_idx ON order_items (order_id);`;
     await sql`CREATE INDEX IF NOT EXISTS inventory_ledger_tenant_idx ON inventory_ledger (tenant_id);`;
+    await sql`CREATE INDEX IF NOT EXISTS unit_conversions_tenant_idx ON product_unit_conversions (tenant_id);`;
+    await sql`CREATE INDEX IF NOT EXISTS unit_conversions_bulk_idx ON product_unit_conversions (bulk_product_id);`;
+    await sql`CREATE INDEX IF NOT EXISTS supplier_invoices_tenant_idx ON supplier_invoices (tenant_id);`;
+    await sql`CREATE INDEX IF NOT EXISTS ai_conversations_tenant_idx ON ai_conversations (tenant_id);`;
 
     return { success: true };
   } catch (error) {

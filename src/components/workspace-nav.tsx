@@ -5,6 +5,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { BrandLogo } from "@/components/brand-logo";
 import { CashierSwitcherModal } from "@/components/cashier-switcher-modal";
+import { AICopilotDrawer } from "@/components/ai-copilot-drawer";
 import { logoutAction } from "@/actions/auth";
 import {
   Monitor,
@@ -19,6 +20,7 @@ import {
   ShieldCheck,
   ChevronRight,
   ExternalLink,
+  Sparkles,
 } from "lucide-react";
 
 import { ThemeToggle } from "@/components/theme-toggle";
@@ -48,6 +50,7 @@ interface WorkspaceNavProps {
 export function WorkspaceNav({ user, tenant, activeShift }: WorkspaceNavProps) {
   const pathname = usePathname();
   const [showPinModal, setShowPinModal] = useState(false);
+  const [showCopilotDrawer, setShowCopilotDrawer] = useState(false);
 
   const isPos = pathname.startsWith("/pos");
   const isBackOfficeUser = user.role === "OWNER" || user.role === "MANAGER";
@@ -102,8 +105,19 @@ export function WorkspaceNav({ user, tenant, activeShift }: WorkspaceNavProps) {
           )}
         </div>
 
-        {/* Right: Theme Toggle, Cashier Switcher & Auth actions */}
+        {/* Right: AI Copilot, Theme Toggle, Cashier Switcher & Auth actions */}
         <div className="flex items-center gap-2 sm:gap-3">
+          {/* OmniAI Copilot Quick Launcher Button */}
+          <button
+            type="button"
+            onClick={() => setShowCopilotDrawer(true)}
+            title="Open OmniAI Copilot (Sheng / Swahili / English store query)"
+            className="px-3 py-1.5 rounded-xl bg-gradient-to-r from-emerald-600 to-indigo-600 hover:from-emerald-500 hover:to-indigo-500 text-white text-xs font-black flex items-center gap-1.5 shadow-md shadow-emerald-500/20 cursor-pointer transition-all active:scale-95 animate-pulse hover:animate-none"
+          >
+            <Sparkles className="w-3.5 h-3.5" />
+            <span className="hidden sm:inline">AI Copilot</span>
+          </button>
+
           {/* Universal Theme Switcher */}
           <ThemeToggle size="sm" />
 
@@ -141,6 +155,14 @@ export function WorkspaceNav({ user, tenant, activeShift }: WorkspaceNavProps) {
           </form>
         </div>
       </header>
+
+      {/* OmniAI Multilingual Copilot Drawer */}
+      <AICopilotDrawer
+        isOpen={showCopilotDrawer}
+        onClose={() => setShowCopilotDrawer(false)}
+        currency={tenant.currency}
+        storeName={tenant.name}
+      />
 
       {/* Cashier 4-digit PIN switcher modal */}
       <CashierSwitcherModal

@@ -166,11 +166,18 @@ export const products = pgTable(
     batchNumber: text("batch_number"), // For Pharmacy/Agrovet
     modifiersJson: jsonb("modifiers_json"), // For Restaurant add-ons/tables
     imageUrl: text("image_url"),
+    // AI & Kadogo Fractional Extensions
+    parentProductId: uuid("parent_product_id"),
+    conversionFactor: numeric("conversion_factor", { precision: 14, scale: 4 }),
+    isFractional: boolean("is_fractional").default(false).notNull(),
+    taxCategory: text("tax_category").default("STANDARD").notNull(), // STANDARD (16%), ZERO_RATED (0%), EXEMPT (0%)
+    hsCode: text("hs_code"), // KRA eTIMS HS Code
   },
   (table) => [
     index("products_tenant_idx").on(table.tenantId),
     index("products_barcode_idx").on(table.barcode),
     index("products_sku_idx").on(table.sku),
+    index("products_parent_idx").on(table.parentProductId),
   ]
 );
 
@@ -268,12 +275,12 @@ export const orderItems = pgTable(
       .references(() => products.id, { onDelete: "restrict" })
       .notNull(),
     productName: text("product_name").notNull(),
-    quantity: numeric("quantity", { precision: 12, scale: 2 }).notNull(),
-    unitCost: numeric("unit_cost", { precision: 12, scale: 2 }).default("0.00").notNull(),
-    unitPrice: numeric("unit_price", { precision: 12, scale: 2 }).notNull(),
+    quantity: numeric("quantity", { precision: 14, scale: 4 }).notNull(),
+    unitCost: numeric("unit_cost", { precision: 14, scale: 4 }).default("0.0000").notNull(),
+    unitPrice: numeric("unit_price", { precision: 14, scale: 4 }).notNull(),
     discount: numeric("discount", { precision: 12, scale: 2 }).default("0.00").notNull(),
     subtotal: numeric("subtotal", { precision: 12, scale: 2 }).notNull(),
-    refundedQty: numeric("refunded_qty", { precision: 12, scale: 2 }).default("0.00").notNull(),
+    refundedQty: numeric("refunded_qty", { precision: 14, scale: 4 }).default("0.0000").notNull(),
   },
   (table) => [
     index("order_items_order_idx").on(table.orderId),
@@ -295,9 +302,9 @@ export const inventoryLedger = pgTable(
     userId: uuid("user_id")
       .references(() => users.id, { onDelete: "set null" }),
     type: ledgerTypeEnum("type").notNull(),
-    quantityChange: numeric("quantity_change", { precision: 12, scale: 2 }).notNull(),
-    previousStock: numeric("previous_stock", { precision: 12, scale: 2 }).notNull(),
-    newStock: numeric("new_stock", { precision: 12, scale: 2 }).notNull(),
+    quantityChange: numeric("quantity_change", { precision: 14, scale: 4 }).notNull(),
+    previousStock: numeric("previous_stock", { precision: 14, scale: 4 }).notNull(),
+    newStock: numeric("new_stock", { precision: 14, scale: 4 }).notNull(),
     referenceNote: text("reference_note"),
     createdAt: timestamp("created_at", { withTimezone: true }).defaultNow().notNull(),
   },
@@ -305,6 +312,78 @@ export const inventoryLedger = pgTable(
     index("inventory_ledger_tenant_idx").on(table.tenantId),
     index("inventory_ledger_product_idx").on(table.productId),
     index("inventory_ledger_created_at_idx").on(table.createdAt),
+  ]
+);
+
+// 10. Product Unit Conversions ("Kadogo" Fractional Economy Engine)
+export const productUnitConversions = pgTable(
+  "product_unit_conversions",
+  {
+    id: uuid("id").primaryKey().defaultRandom(),
+    tenantId: uuid("tenant_id")
+      .references(() => tenants.id, { onDelete: "cascade" })
+      .notNull(),
+    bulkProductId: uuid("bulk_product_id")
+      .references(() => products.id, { onDelete: "cascade" })
+      .notNull(),
+    unitName: text("unit_name").notNull(), // e.g. "0.2500kg (Quarter kg)", "0.5000kg (Nusu kg)"
+    unitCode: text("unit_code").notNull(), // e.g. "0.2500_KG", "0.5000_KG"
+    ratioToBulk: numeric("ratio_to_bulk", { precision: 14, scale: 4 }).notNull(), // 0.0050 for 250g from 50kg sack
+    sellingPrice: numeric("selling_price", { precision: 14, scale: 4 }).notNull(),
+    costPrice: numeric("cost_price", { precision: 14, scale: 4 }).notNull(),
+    targetMarginPercent: numeric("target_margin_percent", { precision: 6, scale: 2 }).default("15.00").notNull(),
+    createdAt: timestamp("created_at", { withTimezone: true }).defaultNow().notNull(),
+  },
+  (table) => [
+    index("unit_conversions_tenant_idx").on(table.tenantId),
+    index("unit_conversions_bulk_idx").on(table.bulkProductId),
+  ]
+);
+
+// 11. Supplier Invoices (Vision Ingestion & Delivery Receipts)
+export const supplierInvoices = pgTable(
+  "supplier_invoices",
+  {
+    id: uuid("id").primaryKey().defaultRandom(),
+    tenantId: uuid("tenant_id")
+      .references(() => tenants.id, { onDelete: "cascade" })
+      .notNull(),
+    userId: uuid("user_id")
+      .references(() => users.id, { onDelete: "set null" }),
+    supplierName: text("supplier_name").notNull(),
+    invoiceNumber: text("invoice_number"),
+    invoiceDate: timestamp("invoice_date", { withTimezone: true }),
+    totalAmount: numeric("total_amount", { precision: 14, scale: 4 }).default("0.0000").notNull(),
+    rawOcrText: text("raw_ocr_text"),
+    extractedItemsJson: jsonb("extracted_items_json"),
+    imageUrl: text("image_url"),
+    status: text("status").default("PENDING_REVIEW").notNull(), // "PENDING_REVIEW" | "COMMITTED" | "REJECTED"
+    createdAt: timestamp("created_at", { withTimezone: true }).defaultNow().notNull(),
+  },
+  (table) => [
+    index("supplier_invoices_tenant_idx").on(table.tenantId),
+    index("supplier_invoices_created_idx").on(table.createdAt),
+  ]
+);
+
+// 12. AI Conversations (Conversational Copilot Drawer & WhatsApp Webhooks)
+export const aiConversations = pgTable(
+  "ai_conversations",
+  {
+    id: uuid("id").primaryKey().defaultRandom(),
+    tenantId: uuid("tenant_id")
+      .references(() => tenants.id, { onDelete: "cascade" })
+      .notNull(),
+    userId: uuid("user_id")
+      .references(() => users.id, { onDelete: "set null" }),
+    channel: text("channel").default("DRAWER").notNull(), // "DRAWER" | "WHATSAPP" | "POS"
+    title: text("title").default("New Conversation").notNull(),
+    messagesJson: jsonb("messages_json").default([]).notNull(),
+    lastInteractedAt: timestamp("last_interacted_at", { withTimezone: true }).defaultNow().notNull(),
+  },
+  (table) => [
+    index("ai_conversations_tenant_idx").on(table.tenantId),
+    index("ai_conversations_user_idx").on(table.userId),
   ]
 );
 
@@ -320,6 +399,9 @@ export const tenantsRelations = relations(tenants, ({ many }) => ({
   customers: many(customers),
   orders: many(orders),
   inventoryLedger: many(inventoryLedger),
+  productUnitConversions: many(productUnitConversions),
+  supplierInvoices: many(supplierInvoices),
+  aiConversations: many(aiConversations),
 }));
 
 export const usersRelations = relations(users, ({ one, many }) => ({
@@ -330,6 +412,8 @@ export const usersRelations = relations(users, ({ one, many }) => ({
   sessions: many(sessions),
   shifts: many(registerShifts),
   orders: many(orders),
+  supplierInvoices: many(supplierInvoices),
+  aiConversations: many(aiConversations),
 }));
 
 export const sessionsRelations = relations(sessions, ({ one }) => ({
@@ -358,6 +442,7 @@ export const productsRelations = relations(products, ({ one, many }) => ({
   }),
   orderItems: many(orderItems),
   inventoryLedger: many(inventoryLedger),
+  unitConversions: many(productUnitConversions),
 }));
 
 export const registerShiftsRelations = relations(registerShifts, ({ one, many }) => ({
@@ -426,6 +511,39 @@ export const inventoryLedgerRelations = relations(inventoryLedger, ({ one }) => 
   }),
 }));
 
+export const productUnitConversionsRelations = relations(productUnitConversions, ({ one }) => ({
+  tenant: one(tenants, {
+    fields: [productUnitConversions.tenantId],
+    references: [tenants.id],
+  }),
+  bulkProduct: one(products, {
+    fields: [productUnitConversions.bulkProductId],
+    references: [products.id],
+  }),
+}));
+
+export const supplierInvoicesRelations = relations(supplierInvoices, ({ one }) => ({
+  tenant: one(tenants, {
+    fields: [supplierInvoices.tenantId],
+    references: [tenants.id],
+  }),
+  user: one(users, {
+    fields: [supplierInvoices.userId],
+    references: [users.id],
+  }),
+}));
+
+export const aiConversationsRelations = relations(aiConversations, ({ one }) => ({
+  tenant: one(tenants, {
+    fields: [aiConversations.tenantId],
+    references: [tenants.id],
+  }),
+  user: one(users, {
+    fields: [aiConversations.userId],
+    references: [users.id],
+  }),
+}));
+
 // Types
 export type Tenant = typeof tenants.$inferSelect;
 export type NewTenant = typeof tenants.$inferInsert;
@@ -446,3 +564,10 @@ export type OrderItem = typeof orderItems.$inferSelect;
 export type NewOrderItem = typeof orderItems.$inferInsert;
 export type InventoryLedger = typeof inventoryLedger.$inferSelect;
 export type NewInventoryLedger = typeof inventoryLedger.$inferInsert;
+export type ProductUnitConversion = typeof productUnitConversions.$inferSelect;
+export type NewProductUnitConversion = typeof productUnitConversions.$inferInsert;
+export type SupplierInvoice = typeof supplierInvoices.$inferSelect;
+export type NewSupplierInvoice = typeof supplierInvoices.$inferInsert;
+export type AiConversation = typeof aiConversations.$inferSelect;
+export type NewAiConversation = typeof aiConversations.$inferInsert;
+
